@@ -1,0 +1,64 @@
+<html>
+<head>
+    <title>hello!!!</title>
+    <script src = "d3.js"></script>
+</head>
+<body>
+<p>ni hao!</p>
+<p>how are you!</p>
+<p>hello world!</p>
+<script>
+    var x = d3.select("body").selectAll("p").text("wo hen hao!!");
+    x.style("color", "darkblue").style("font-size", "20px");//hello world
+</script>
+<script>
+    var set = ["i like dog", "i am cat", "baibai"];
+    var sp = d3.select("body").selectAll("p");
+    sp.data(set).text(function(d, i){  //function(d, i) is fixed! d:data, i:index
+        //if(i == 1) {
+        //this.style("font-size", "10px");
+        return d;
+        //}
+    });
+    //sp.text("haha");  //change all to haha
+</script>
+<script>
+    var width = 600;
+    var height = 600;
+    var svg = d3.select("body").append("svg")
+            .attr("width", width)
+            .attr("height", height);
+
+    var set = [30, 20, 45, 12, 21];
+
+    svg.selectAll("rect")   //  draw a column diagram
+            .data(set)
+            .enter()
+            .append("rect") //
+            .attr("x", 10)
+            .attr("y", function(d,i){
+                return i * 30;
+            })
+            .attr("width", function(d, i){
+                return d * 10;
+            })
+            .attr("height", 28)
+            .attr("fill", "lightblue");
+</script>
+<script>
+    var set = [30, 20, 45, 12, 21];
+    var wx = d3.scale.linear()
+            .domain([0,d3.max(set)])
+            .range([0,500]);
+    var axis = d3.svg.axis()
+            .scale(wx)
+            .orient("buttom");
+    svg.append("g")
+            .call(axis);
+
+</script>
+<svg width="50" height="50">
+    <circle cx="25" cy="25" r="22" fill="blue" stroke="gray" stroke-width="2"/>
+</svg>
+</body>
+</html>

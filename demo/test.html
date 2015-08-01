@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>hello world!</title>
+
+    <style type="text/css">
+        #con{
+            color: darkorange;
+            width: 800px;
+        }
+        #h1h1{color: darkred;}
+    </style>
+
+</head>
+<body bgcolor="#9acd32" onload="startTime()">  <!-- //for the timer -->
+
+<h1 id = "h1h1" align="center" onclick="this.innerHTML = 'thanks!'">ANSJCY</h1>
+
+<p id = "p1p1">this is a test for paragraph, this is the first paragraph!!</p>
+
+<div id = "con">
+    <p id = "p2p2">this is a test for div!!!</p>
+    <p>i am having so much fun there!!!</p>
+</div>
+
+<script type="text/javascript">
+    document.write(Date());
+    var x = document.getElementById("h1h1");
+</script>
+
+<script type="text/javascript">
+    var x = document.getElementById("p1p1");
+    document.write('<p> id = "p1p1" is ' + x.innerHTML + '</p>');
+    document.write("<br/>");
+</script>
+
+<button type="button" onclick="document.getElementById('p1p1').style.color = 'yellow'">
+    !!!!!!!!click here to change color!!!!!!!!
+</button>
+<br />
+<script>
+    function haha(){
+        var x = document.getElementById("in");
+        x.value = x.value.toUpperCase();
+    }
+</script>
+<input type="text" id = "in" onchange="fun()">
+<br />
+<script type="text/javascript">
+    var x = document.getElementById("con");
+    var y = x.getElementsByTagName("p");
+    document.write(y[0].innerHTML);
+</script>
+
+<script type="text/javascript">
+    function fn(id){
+        id.innerHTML = "hahahahahaha!";
+    }
+</script>
+
+<br />
+<a href = "http://www.baidu.com">a link!</a>
+
+<p id = "2st" onclick="fn(this)">this is a test for paragraph, this is the first paragraph!!</p>
+
+<div onmouseover="mOver(this)" onmouseout="mOut(this)" style="background-color:green;
+width:120px;height:20px;padding:40px;color:#ffffff;">comehere</div>
+<script>
+    function mOver(obj)
+    {
+        obj.innerHTML="here"
+    }
+
+    function mOut(obj)
+    {
+        obj.innerHTML="there"
+    }
+</script>
+<script>
+    function person(f, l, a){
+        this.f = f;
+        this.l = l;
+        this.a = a;
+        this.change = change;         //have to write this!
+        function change(name){
+            this.l = name;
+        }
+    }
+    var x = new person(1,2,3);
+    x.change(99);
+    document.write(x.l + "<br/>");
+    var sum = 0;
+    for(i in x){
+        sum += x[i];
+    }
+    document.write(sum);
+</script>
+
+<script type="text/javascript">
+    function startTime()
+    {
+        var today=new Date();
+        var h=today.getHours();
+        var m=today.getMinutes();
+        var s=today.getSeconds();
+// add a zero in front of numbers<10
+        m=checkTime(m);
+        s=checkTime(s);
+        document.getElementById('txt').innerHTML=h+":"+m+":"+s;
+        //t=setTimeout('startTime()',500);
+    }
+
+    function checkTime(i)
+    {
+        if (i<10)
+        {i="0" + i}
+        return i
+    }
+</script>
+<div id="txt"></div>
+<script>
+    document.write(location.href);
+</script>
+
+<script>
+    function newDoc(){
+        window.location.assign("http://www.baidu.com");
+    }
+    function back() {
+        window.history.back();
+    }
+    function time5s(){
+        var t = setTimeout("alert('5s')", 5000);
+    }
+
+</script>
+<br />
+<input type="button" value="click to new" onclick="newDoc()">
+<input type="button" value="click to back" onclick="back()">
+<input type="button" value="click and 5s" onclick="time5s()">
+
+</body>
+</html>

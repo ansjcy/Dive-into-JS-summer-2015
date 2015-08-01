@@ -1,0 +1,49 @@
+<html>
+<head>
+    <script type="text/javascript" src="jquery.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $(".ex .hide").click(function(){        //the space is necessary!
+                $(this).parent(".ex").hide(1000);
+            });
+            $("#animate").click(function() {
+                for(var i = 1; i < 5; i++){
+                $("#ani").animate({
+                    left: '250px',
+                    opacity: '0.5',
+                    height: '+=50px',
+                }, "slow").animate({
+                    left: '150px',
+                    opacity: '0.7',
+                    height: '-=50px',
+                });
+            }
+            });
+            $("#get").click(function(){
+                alert("text:"+$("#haha").text());
+            });
+        });
+    </script>
+    <style type="text/css">
+        div.ex{
+            background-color: aquamarine;
+            padding: 7px;
+            border: solid 12px;
+        }
+    </style>
+</head>
+
+<body>
+<h3>my profile</h3>
+<div class="ex">
+    <button class="hide" type="button">hide me!</button>
+    <p>name:haha<br />
+    sex:hehe<br />
+    </p>
+</div>
+<button id = "animate" type="button">animate!</button>
+<div id = "ani" style="background: gold; height: 100px;width: 100px;position: absolute"></div>
+<button id = "get" type="button">get text!!</button>
+<p id="haha">haha</p>
+</body>
+</html>
