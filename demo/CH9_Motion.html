@@ -4,17 +4,9 @@
     <meta charset="UTF-8">
     <script type="text/javascript" src="d3.js"></script>
     <style type="text/css">
-        .axis path,
-        .axis line {
-            fill: none;
-            stroke: black;
-            shape-rendering: crispEdges;
-        }
-
-        .axis text {
-            font-family: sans-serif;
-            font-size: 11px;
-        }
+       svg text{
+           pointer-events: none;
+       }
 
     </style>
     <title></title>
@@ -61,7 +53,35 @@ svg
         })
         .attr("fill", function(d){
             return "rgb(0, 0, " + (d * 10) + ")";
+        })
+        .on("mouseover", function(){
+            d3.select(this)
+                    .attr("fill", "orange");
+        })
+        .on("mouseout", function(d){
+            d3.select(this)
+                    .transition()
+                    .duration(250)
+                    .attr("fill", "rgb(0, 0, "+(d * 10) +")");
+        })
+        .on("click", function(){
+            sortBars();
+        }).
+        append("title")
+        .text(function(d){
+            return d;
         });
+var sortBars = function(){
+    svg.selectAll("rect")
+            .sort(function(a, b){
+                return  d3.ascending(a,b);
+            })
+            .transition()
+            .duration(1000)
+            .attr("x", function(d, i){
+                return xScale(i);
+            });
+};
 svg
         .selectAll("text")
         .data(dataset)
