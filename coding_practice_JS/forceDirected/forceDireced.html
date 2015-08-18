@@ -27,10 +27,13 @@
     });
     var relation = 300;      //length with no move
     var svg = document.querySelector('svg');
+    var k = 0.05; //try!!
     var vector = window.vector;
     function random(min, max){
         return Math.round(min + (max - min) * Math.random());
     }
+
+
     points.forEach(function(points){
         var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
         var x = random(-400, 400);
@@ -46,6 +49,49 @@
         points.s = new vector(x, y);    //displacement
         points.v = new vector();        //velocity
         points.a = new vector();        //acceleration
-    })
+    });
+
+    var lastFrameTime = +new Date();
+    function update(){
+        var frameTime = +new Date();
+        var t = frameTime - lastFrameTime;
+
+        t /= 200;     //try!!
+
+        points.forEach(function(pa){
+            var f = new vector();
+            points.forEach(function (pb) {
+                if(pa == pb)
+                    return;
+                var x = vector.fromPoints(pa.s, pb.s);
+                var delta = x.length() - relation;
+
+                f = f.add(x.normalize(delta * k));
+            });
+            pa.a = f;
+            pa.v = pa.v.add(pa.a.mul(t).mul(0.6)); //momentum smaller and smaller
+            pa.s = pa.s.add(pa.v.mul(t));
+
+            pa.circle.setAttribute('cx', pa.s.x);
+            pa.circle.setAttribute('cy', pa.s.y);
+        });
+        var linkPath = [];
+        points.forEach(function(pa){
+            var sa = pa.s;
+            points.forEach(function (pb) {
+                if(pa == pb)
+                    return;
+                var sb = pb.s;
+                linkPath = linkPath.concat([
+                    'M', sa.x, sa.y,
+                    'L', sb.x, sb.y
+                ]);
+            });
+        });
+        document.getElementById('links').setAttribute('d', linkPath.join(' '));
+        lastFrameTime = frameTime;
+        window.requestAnimationFrame(update);
+    }
+    window.requestAnimationFrame(update);
 </script>
 </html>

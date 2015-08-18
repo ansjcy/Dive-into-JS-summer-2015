@@ -3,8 +3,8 @@
  */
 (function(){
     function vector(x, y){
-        this.x = x;
-        this.y = y;
+        this.x = x||0;
+        this.y = y||0;
     }
     vector.prototype = {
         constructor: vector,
@@ -31,7 +31,7 @@
         }
     };
     vector.fromPoints = function(p1, p2){
-        return vector(p2.x - p1.x, p2.y - p1.y);
+        return new vector(p2.x - p1.x, p2.y - p1.y);
     };
     window.vector = vector; //vec into window!
 })();
