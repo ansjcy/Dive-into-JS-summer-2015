@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Force</title>
+    <style>
+        html, body, svg{
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <svg viewBox="-400, -400, 800, 800">
+        <path id = "links" fill = "none" stroke="gray"></path>
+    </svg>
+</body>
+<script src = "vector.js"></script>
+<script>
+    var points = 'a, b, c, d, e'.split(',').map(function(name, index, array){
+        return{
+            name: name,
+            color: 'hsl(' + (360 * index / array.length) + ', 100%, 60%)'
+        };
+    });
+    var relation = 300;      //length with no move
+    var svg = document.querySelector('svg');
+    var vector = window.vector;
+    function random(min, max){
+        return Math.round(min + (max - min) * Math.random());
+    }
+    points.forEach(function(points){
+        var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+        var x = random(-400, 400);
+        var y = random(-400, 400);
+        circle.setAttribute('cx', x);
+        circle.setAttribute('cy', y);
+        circle.setAttribute('r', 10);
+        circle.setAttribute('fill', points.color);
+
+        svg.appendChild(circle);
+
+        points.circle = circle;
+        points.s = new vector(x, y);    //displacement
+        points.v = new vector();        //velocity
+        points.a = new vector();        //acceleration
+    })
+</script>
+</html>
