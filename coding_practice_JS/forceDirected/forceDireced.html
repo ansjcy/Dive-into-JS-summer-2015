@@ -31,9 +31,9 @@
     
     //var svg = document.getElementsByTagNameNS("svg");
     var svg = document.querySelector('svg');
-    var balance = 300;      //length with no move
+    var balance = 0;      //length with no move
     var k = 0.05; //try!!
-    var G = 0.4;
+    var Q = 50;
     var vector = window.vector;
     function random(min, max){
         return Math.round(min + (max - min)  * Math.random());
@@ -100,28 +100,50 @@
         var frameTime = +new Date();
         var t = frameTime - lastFrameTime;
 
-        t /= 200;     //try!!
+        t /= 2000;     //try!!
 
         for(var i = 0; i < 77; i++){
             var f = new vector();
-            for(var j = 0; j < 254; j++){
+            for(var j = 0; j < 254; j++){                //attraction
                 if(i == miserables.links[j].source) {
                     var l = miserables.links[j].target;
                     var x = vector.fromPoints(points[i].s, points[l].s);
                     var delta = x.length() - balance;
-                    f = f.add(x.normalize(delta * k));
+                    f = f.add(x.normalize(-delta * k * miserables.links[j].value));
                 }
                 if(i == miserables.links[j].target) {
                     var l = miserables.links[j].source;
                     var x = vector.fromPoints(points[i].s, points[l].s);
                     var delta = x.length() - balance;
-                    f = f.add(x.normalize(delta * k));
+                    f = f.add(x.normalize(-delta * k * miserables.links[j].value));
                 }
             }
+//            for(var j = 0; j < 77; j++){
+//                var x = vector.fromPoints(points[i].s, points[j].s);
+//                var l = x.length();
+//                f = f.add(x.normalize(Q/l*l));
+//
+//            }
             points[i].a = f;
             points[i].v = points[i].v.add(points[i].a.mul(t).mul(0.6)); //momentum smaller and smaller
             points[i].s = points[i].s.add(points[i].v.mul(t));
 
+            if(points[i].s.x > 400) {
+                points[i].s.x = 400;
+                points[i].v.mul(-1);
+            }
+            if(points[i].s.x < 10) {
+                points[i].s.x = 10;
+                points[i].v.mul(-1);
+            }
+            if(points[i].s.y > 400) {
+                points[i].s.y = 400;
+                points[i].v.mul(-1);
+            }
+            if(points[i].s.y < 10) {
+                points[i].s.y = 10;
+                points[i].v.mul(-1);
+            }
 
             points[i].circle.setAttribute('cx', points[i].s.x);
             points[i].circle.setAttribute('cy', points[i].s.y);
