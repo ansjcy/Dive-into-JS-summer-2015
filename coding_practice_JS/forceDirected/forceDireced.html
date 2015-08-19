@@ -15,7 +15,7 @@
     </style>
 </head>
 <body>
-    <svg x="400" y="400" width="400", height="400">
+    <svg x="400" y="400" width="500" height="500">
     </svg>
 </body>
 <script>
@@ -31,9 +31,9 @@
     
     //var svg = document.getElementsByTagNameNS("svg");
     var svg = document.querySelector('svg');
-    var balance = 0;      //length with no move
-    var k = 0.05; //try!!
-    var Q = 50;
+    var balance = 25;      //length with no move
+    var k = 0.12; //try!!
+    var Q = 0.12;
     var vector = window.vector;
     function random(min, max){
         return Math.round(min + (max - min)  * Math.random());
@@ -42,13 +42,13 @@
     //draw circle
     for(var i = 0; i < 77; i++) {
         var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
-        var x = random(100, 300);
-        var y = random(100, 300);
+        var x = random(0, 400);
+        var y = random(0, 400);
         circle.setAttribute('cx', x);
         circle.setAttribute('cy', y);
-        circle.setAttribute('r', 4);
+        circle.setAttribute('r', '4');
         circle.setAttribute('fill', points[i].color);
-        circle.setAttribute("stroke", "#fff");
+        circle.setAttribute("stroke", "#eee");
         circle.setAttribute("stroke-width", "2px");
 
         svg.appendChild(circle);
@@ -90,7 +90,7 @@
         line.setAttribute("y2", y2);
         line.setAttribute("style", "stroke:#999");
         line.setAttribute("id", "line"+i);
-        line.setAttribute("stroke-width", miserables.links[i].value/2);
+        line.setAttribute("stroke-width", (miserables.links[i].value)/4);
         svg.appendChild(line);
     }
 
@@ -100,7 +100,7 @@
         var frameTime = +new Date();
         var t = frameTime - lastFrameTime;
 
-        t /= 2000;     //try!!
+        t /= 20;     //try!!
 
         for(var i = 0; i < 77; i++){
             var f = new vector();
@@ -109,40 +109,42 @@
                     var l = miserables.links[j].target;
                     var x = vector.fromPoints(points[i].s, points[l].s);
                     var delta = x.length() - balance;
-                    f = f.add(x.normalize(-delta * k * miserables.links[j].value));
+                    f = f.add(x.normalize(delta * k * Math.sqrt(miserables.links[j].value/2)));
                 }
                 if(i == miserables.links[j].target) {
                     var l = miserables.links[j].source;
                     var x = vector.fromPoints(points[i].s, points[l].s);
                     var delta = x.length() - balance;
-                    f = f.add(x.normalize(-delta * k * miserables.links[j].value));
+                    f = f.add(x.normalize(delta * k * Math.sqrt(miserables.links[j].value/2)));
                 }
             }
-//            for(var j = 0; j < 77; j++){
-//                var x = vector.fromPoints(points[i].s, points[j].s);
-//                var l = x.length();
-//                f = f.add(x.normalize(Q/l*l));
-//
-//            }
+
+            for(var j = 0; j < 77; j++){
+                var x = vector.fromPoints(points[j].s, points[i].s);
+                var l = x.length();
+                f = f.add(x.normalize(Q/l*l));
+            }
+
             points[i].a = f;
-            points[i].v = points[i].v.add(points[i].a.mul(t).mul(0.6)); //momentum smaller and smaller
+            points[i].v = points[i].v.add(points[i].a.mul(t));                     //momentum smaller and smaller
+            points[i].v = points[i].v.mul(0.15);
             points[i].s = points[i].s.add(points[i].v.mul(t));
 
-            if(points[i].s.x > 400) {
-                points[i].s.x = 400;
-                points[i].v.mul(-1);
+            if(points[i].s.x > 800) {
+                points[i].s.x = 800;
+                points[i].v = points[i].v.mul(-1);
             }
             if(points[i].s.x < 10) {
                 points[i].s.x = 10;
-                points[i].v.mul(-1);
+                points[i].v = points[i].v.mul(-1);
             }
-            if(points[i].s.y > 400) {
-                points[i].s.y = 400;
-                points[i].v.mul(-1);
+            if(points[i].s.y > 800) {
+                points[i].s.y = 800;
+                points[i].v = points[i].v.mul(-1);
             }
             if(points[i].s.y < 10) {
                 points[i].s.y = 10;
-                points[i].v.mul(-1);
+                points[i].v = points[i].v.mul(-1);
             }
 
             points[i].circle.setAttribute('cx', points[i].s.x);
@@ -190,10 +192,10 @@
             var y1 = points[miserables.links[i].source].s.y;
             var x2 = points[miserables.links[i].target].s.x;
             var y2 = points[miserables.links[i].target].s.y;
-            (x1 > x2) ? (x1 -= ((x1 - x2) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 4, x2 += ((x1 - x2) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 4)
-                    : (x1 += ((x2 - x1) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 4, x2 -= ((x2 - x1) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 4);
-            (y1 > y2) ? (y1 -= ((y1 - y2) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 4, y2 += ((y1 - y2) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 4)
-                    : (y1 += ((y2 - y1) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 4, y2 -= ((y2 - y1) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 4);
+            (x1 > x2) ? (x1 -= ((x1 - x2) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 6, x2 += ((x1 - x2) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 6)
+                    : (x1 += ((x2 - x1) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 6, x2 -= ((x2 - x1) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 6);
+            (y1 > y2) ? (y1 -= ((y1 - y2) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 6, y2 += ((y1 - y2) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 6)
+                    : (y1 += ((y2 - y1) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 6, y2 -= ((y2 - y1) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 6);
             line = document.getElementById("line"+i);
             line.setAttribute("x1", x1);
             line.setAttribute("y1", y1);
