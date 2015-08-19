@@ -58,24 +58,6 @@
         points[i].v = new vector();        //velocity
         points[i].a = new vector();        //acceleration
     }
-//    points.forEach(function(points){
-//        var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
-//        var x = random(0, 400);
-//        var y = random(0, 400);
-//        circle.setAttribute('cx', x);
-//        circle.setAttribute('cy', y);
-//        circle.setAttribute('r', 4);
-//        circle.setAttribute('fill', points.color);
-//        circle.setAttribute("stroke", "#fff");
-//        circle.setAttribute("stroke-width", "2px");
-//
-//        svg.appendChild(circle);
-//
-//        points.circle = circle;
-//        points.s = new vector(x, y);    //displacement
-//        points.v = new vector();        //velocity
-//        points.a = new vector();        //acceleration
-//    });
 
     //draw line
     for(var i = 0; i < 254; i++) {
@@ -150,42 +132,6 @@
             points[i].circle.setAttribute('cx', points[i].s.x);
             points[i].circle.setAttribute('cy', points[i].s.y);
         }
-//
-//        points.forEach(function(pa){
-//            var f = new vector();
-//            points.forEach(function (pb) {
-//                if(pa == pb)
-//                    return;
-//                var x = vector.fromPoints(pa.s, pb.s);
-//                var delta = x.length() - balance;
-//
-//                f = f.add(x.normalize(delta * k));
-//            });
-//            pa.a = f;
-//            pa.v = pa.v.add(pa.a.mul(t).mul(0.6)); //momentum smaller and smaller
-//            pa.s = pa.s.add(pa.v.mul(t));
-
-
-//            if(pa.s.x > 400) {
-//                pa.s.x = 400;
-//                pa.v.mul(-1);
-//            }
-//            if(pa.s.x < 10) {
-//                pa.s.x = 10;
-//                pa.v.mul(-1);
-//            }
-//            if(pa.s.y > 400) {
-//                pa.s.y = 400;
-//                pa.v.mul(-1);
-//            }
-//            if(pa.s.y < 10) {
-//                pa.s.y = 10;
-//                pa.v.mul(-1);
-//            }
-//
-//            pa.circle.setAttribute('cx', pa.s.x);
-//            pa.circle.setAttribute('cy', pa.s.y);
-//        });
 
         for(var i = 0; i < 254; i++) {
             var x1 = points[miserables.links[i].source].s.x;
