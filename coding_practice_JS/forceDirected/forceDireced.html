@@ -15,8 +15,7 @@
     </style>
 </head>
 <body>
-    <svg viewBox="0, 0, 400, 400">
-        <path id = "links" fill = "none" stroke="gray"></path>
+    <svg x="400" y="400" width="400", height="400">
     </svg>
 </body>
 <script>
@@ -34,28 +33,66 @@
     var svg = document.querySelector('svg');
     var balance = 300;      //length with no move
     var k = 0.05; //try!!
+    var G = 0.4;
     var vector = window.vector;
     function random(min, max){
         return Math.round(min + (max - min)  * Math.random());
     }
 
-
-    points.forEach(function(points){
+    //draw circle
+    for(var i = 0; i < 77; i++) {
         var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
-        var x = random(0, 400);
-        var y = random(0, 400);
+        var x = random(100, 300);
+        var y = random(100, 300);
         circle.setAttribute('cx', x);
         circle.setAttribute('cy', y);
-        circle.setAttribute('r', 5);
-        circle.setAttribute('fill', points.color);
+        circle.setAttribute('r', 4);
+        circle.setAttribute('fill', points[i].color);
+        circle.setAttribute("stroke", "#fff");
+        circle.setAttribute("stroke-width", "2px");
 
         svg.appendChild(circle);
 
-        points.circle = circle;
-        points.s = new vector(x, y);    //displacement
-        points.v = new vector();        //velocity
-        points.a = new vector();        //acceleration
-    });
+        points[i].circle = circle;
+        points[i].s = new vector(x, y);    //displacement
+        points[i].v = new vector();        //velocity
+        points[i].a = new vector();        //acceleration
+    }
+//    points.forEach(function(points){
+//        var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
+//        var x = random(0, 400);
+//        var y = random(0, 400);
+//        circle.setAttribute('cx', x);
+//        circle.setAttribute('cy', y);
+//        circle.setAttribute('r', 4);
+//        circle.setAttribute('fill', points.color);
+//        circle.setAttribute("stroke", "#fff");
+//        circle.setAttribute("stroke-width", "2px");
+//
+//        svg.appendChild(circle);
+//
+//        points.circle = circle;
+//        points.s = new vector(x, y);    //displacement
+//        points.v = new vector();        //velocity
+//        points.a = new vector();        //acceleration
+//    });
+
+    //draw line
+    for(var i = 0; i < 254; i++) {
+        var line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        var x1 = points[miserables.links[i].source].s.x;
+        var y1 = points[miserables.links[i].source].s.y;
+        var x2 = points[miserables.links[i].target].s.x;
+        var y2 = points[miserables.links[i].target].s.y;
+        line.setAttribute("x1", x1);
+        line.setAttribute("y1", y1);
+        line.setAttribute("x2", x2);
+        line.setAttribute("y2", y2);
+        line.setAttribute("style", "stroke:#999");
+        line.setAttribute("id", "line"+i);
+        line.setAttribute("stroke-width", miserables.links[i].value/2);
+        svg.appendChild(line);
+    }
 
     var lastFrameTime = +new Date();
 
@@ -65,34 +102,82 @@
 
         t /= 200;     //try!!
 
-        points.forEach(function(pa){
+        for(var i = 0; i < 77; i++){
             var f = new vector();
-            points.forEach(function (pb) {
-                if(pa == pb)
-                    return;
-                var x = vector.fromPoints(pa.s, pb.s);
-                var delta = x.length() - balance;
+            for(var j = 0; j < 254; j++){
+                if(i == miserables.links[j].source) {
+                    var l = miserables.links[j].target;
+                    var x = vector.fromPoints(points[i].s, points[l].s);
+                    var delta = x.length() - balance;
+                    f = f.add(x.normalize(delta * k));
+                }
+                if(i == miserables.links[j].target) {
+                    var l = miserables.links[j].source;
+                    var x = vector.fromPoints(points[i].s, points[l].s);
+                    var delta = x.length() - balance;
+                    f = f.add(x.normalize(delta * k));
+                }
+            }
+            points[i].a = f;
+            points[i].v = points[i].v.add(points[i].a.mul(t).mul(0.6)); //momentum smaller and smaller
+            points[i].s = points[i].s.add(points[i].v.mul(t));
 
-                f = f.add(x.normalize(delta * k));
-            });
-            pa.a = f;
-            pa.v = pa.v.add(pa.a.mul(t).mul(0.6)); //momentum smaller and smaller
-            pa.s = pa.s.add(pa.v.mul(t));
 
-            pa.circle.setAttribute('cx', pa.s.x);
-            pa.circle.setAttribute('cy', pa.s.y);
-        });
-
-        var linkPath = [];
-        for(var i = 0; i < 254; i++){
-            linkPath = linkPath.concat([
-                'M', points[miserables.links[i].source].s.x, points[miserables.links[i].source].s.y,
-                'L', points[miserables.links[i].target].s.x, points[miserables.links[i].target].s.y
-            ])
-
+            points[i].circle.setAttribute('cx', points[i].s.x);
+            points[i].circle.setAttribute('cy', points[i].s.y);
         }
+//
+//        points.forEach(function(pa){
+//            var f = new vector();
+//            points.forEach(function (pb) {
+//                if(pa == pb)
+//                    return;
+//                var x = vector.fromPoints(pa.s, pb.s);
+//                var delta = x.length() - balance;
+//
+//                f = f.add(x.normalize(delta * k));
+//            });
+//            pa.a = f;
+//            pa.v = pa.v.add(pa.a.mul(t).mul(0.6)); //momentum smaller and smaller
+//            pa.s = pa.s.add(pa.v.mul(t));
 
-        document.getElementById('links').setAttribute('d', linkPath.join(' '));
+
+//            if(pa.s.x > 400) {
+//                pa.s.x = 400;
+//                pa.v.mul(-1);
+//            }
+//            if(pa.s.x < 10) {
+//                pa.s.x = 10;
+//                pa.v.mul(-1);
+//            }
+//            if(pa.s.y > 400) {
+//                pa.s.y = 400;
+//                pa.v.mul(-1);
+//            }
+//            if(pa.s.y < 10) {
+//                pa.s.y = 10;
+//                pa.v.mul(-1);
+//            }
+//
+//            pa.circle.setAttribute('cx', pa.s.x);
+//            pa.circle.setAttribute('cy', pa.s.y);
+//        });
+
+        for(var i = 0; i < 254; i++) {
+            var x1 = points[miserables.links[i].source].s.x;
+            var y1 = points[miserables.links[i].source].s.y;
+            var x2 = points[miserables.links[i].target].s.x;
+            var y2 = points[miserables.links[i].target].s.y;
+            (x1 > x2) ? (x1 -= ((x1 - x2) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 4, x2 += ((x1 - x2) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 4)
+                    : (x1 += ((x2 - x1) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 4, x2 -= ((x2 - x1) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 4);
+            (y1 > y2) ? (y1 -= ((y1 - y2) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 4, y2 += ((y1 - y2) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 4)
+                    : (y1 += ((y2 - y1) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 4, y2 -= ((y2 - y1) / Math.sqrt((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2))) * 4);
+            line = document.getElementById("line"+i);
+            line.setAttribute("x1", x1);
+            line.setAttribute("y1", y1);
+            line.setAttribute("x2", x2);
+            line.setAttribute("y2", y2);
+        }
         lastFrameTime = frameTime;
         window.requestAnimationFrame(update);
     }
