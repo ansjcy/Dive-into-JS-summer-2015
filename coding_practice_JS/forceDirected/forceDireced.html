@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>Force</title>
+    <script src = "vector.js"></script>
+    <script src = "miserables.js"></script>
     <style>
         html, body, svg{
             margin: 0;
@@ -13,34 +15,38 @@
     </style>
 </head>
 <body>
-    <svg viewBox="-400, -400, 800, 800">
+    <svg viewBox="0, 0, 400, 400">
         <path id = "links" fill = "none" stroke="gray"></path>
     </svg>
 </body>
-<script src = "vector.js"></script>
 <script>
-    var points = 'a, b, c, d, e'.split(',').map(function(name, index, array){
-        return{
-            name: name,
-            color: 'hsl(' + (360 * index / array.length) + ', 100%, 60%)'
-        };
-    });
-    var relation = 300;      //length with no move
+    var points = [];
+    //var linkPath = [];
+    for(var i = 0; i < 77; i++){
+        var point = {};
+        point.name = miserables.nodes[i].name;
+        point.color = 'hsl(' + (360 * (miserables.nodes[i].group + 1) / 11) + ', 100%, 60%)';
+        point.id = i;
+        points.push(point);
+    }
+    
+    //var svg = document.getElementsByTagNameNS("svg");
     var svg = document.querySelector('svg');
+    var balance = 300;      //length with no move
     var k = 0.05; //try!!
     var vector = window.vector;
     function random(min, max){
-        return Math.round(min + (max - min) * Math.random());
+        return Math.round(min + (max - min)  * Math.random());
     }
 
 
     points.forEach(function(points){
         var circle = document.createElementNS('http://www.w3.org/2000/svg','circle');
-        var x = random(-400, 400);
-        var y = random(-400, 400);
+        var x = random(0, 400);
+        var y = random(0, 400);
         circle.setAttribute('cx', x);
         circle.setAttribute('cy', y);
-        circle.setAttribute('r', 10);
+        circle.setAttribute('r', 5);
         circle.setAttribute('fill', points.color);
 
         svg.appendChild(circle);
@@ -52,6 +58,7 @@
     });
 
     var lastFrameTime = +new Date();
+
     function update(){
         var frameTime = +new Date();
         var t = frameTime - lastFrameTime;
@@ -64,7 +71,7 @@
                 if(pa == pb)
                     return;
                 var x = vector.fromPoints(pa.s, pb.s);
-                var delta = x.length() - relation;
+                var delta = x.length() - balance;
 
                 f = f.add(x.normalize(delta * k));
             });
@@ -75,19 +82,16 @@
             pa.circle.setAttribute('cx', pa.s.x);
             pa.circle.setAttribute('cy', pa.s.y);
         });
+
         var linkPath = [];
-        points.forEach(function(pa){
-            var sa = pa.s;
-            points.forEach(function (pb) {
-                if(pa == pb)
-                    return;
-                var sb = pb.s;
-                linkPath = linkPath.concat([
-                    'M', sa.x, sa.y,
-                    'L', sb.x, sb.y
-                ]);
-            });
-        });
+        for(var i = 0; i < 254; i++){
+            linkPath = linkPath.concat([
+                'M', points[miserables.links[i].source].s.x, points[miserables.links[i].source].s.y,
+                'L', points[miserables.links[i].target].s.x, points[miserables.links[i].target].s.y
+            ])
+
+        }
+
         document.getElementById('links').setAttribute('d', linkPath.join(' '));
         lastFrameTime = frameTime;
         window.requestAnimationFrame(update);
