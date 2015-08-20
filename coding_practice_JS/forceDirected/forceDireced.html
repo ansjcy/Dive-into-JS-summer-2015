@@ -7,15 +7,15 @@
     <script src = "miserables.js"></script>
     <style>
         html, body, svg{
-            margin: 0;
-            padding: 0;
+            margin: 10px;
+            padding: 10px;
             width: 100%;
             height: 100%;
         }
     </style>
 </head>
 <body>
-    <svg x="400" y="400" width="500" height="500">
+    <svg id="svg" x="400" y="400" width="500" height="500">
     </svg>
 </body>
 <script>
@@ -30,7 +30,8 @@
     }
     
     //var svg = document.getElementsByTagNameNS("svg");
-    var svg = document.querySelector('svg');
+    //var svg = document.querySelector('svg');
+    var svg = document.getElementById('svg');
     var balance = 25;      //length with no move
     var k = 0.12; //try!!
     var Q = 0.12;
