@@ -1,3 +1,4 @@
+<!--getBBox!!!-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,7 +14,7 @@
     </style>
     <script>
         function sortWay(a, b){
-            return a.fontSize - b.fontSize;
+            return -(a.fontSize - b.fontSize);
         }
         function Cloud(input){
             this.words = [];
@@ -30,6 +31,8 @@
         }
         Cloud.prototype = {
             start: function(){
+                var defaultX = 200;
+                var defaultY = 200;
                 var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
                 svg.setAttribute("width", "400");
                 svg.setAttribute("height", "400");
@@ -41,15 +44,86 @@
                 for(var i = 0; i < 6; i++) {
                     var text = document.createElementNS("http://www.w3.org/2000/svg", "text");
                     text.setAttribute("fill", this.myColor[i]);
-                    text.setAttribute("x", i * 100);
-                    text.setAttribute("y", "100");
-                    text.setAttribute("width", "50%");
-                    text.setAttribute("height", "50%");
+                    text.setAttribute("x", defaultX);
+                    text.setAttribute("y", defaultY);
+                    text.setAttribute("id", "text"+i);
                     //text.innerHTML = "hello";
                     text.innerHTML = this.words[i].cnt;
                     text.setAttribute("font-size", this.words[i].fontSize);
-                    //text.addEventListener("click", function () { alert("clicked"); });
                     svg.appendChild(text);
+
+                    var rotate = (Math.random()*180-90);
+                    //text.setAttribute("transform", "rotate("+rotate+",200,200)");
+                    //text.addEventListener("click", function () { alert("clicked"); });
+
+                    this.words[i].text = text;
+                    this.words[i].rotate = rotate;
+                    //console.log(this.words[i].text);
+                    //console.log(this.words[i].text.getBBox());
+                }
+                for(var i = 0; i < 6; i++) {
+                    var x1, x2, y1, y2;
+                    x1 = y1 = 200;
+                    var heightTmp = this.words[i].text.getBBox().height;
+                    var widthTmp = this.words[i].text.getBBox().width;
+                    x2 = x1 + widthTmp;
+                    y2 = y1 + heightTmp;
+                    //var angle1 = this.words[i].rotate;
+                    //var angle2 = Math.atan(heightTmp / widthTmp);
+                    //var angle = angle1 - angle2;
+                    //x2 = x1 + Math.cos(Math.sqrt(heightTmp * heightTmp + widthTmp * widthTmp));
+                    //y2 = y1 + Math.sin(Math.sqrt(heightTmp * heightTmp + widthTmp * widthTmp));
+                    this.words[i].x1 = x1;
+                    this.words[i].x2 = x2;
+                    this.words[i].y1 = y1;
+                    this.words[i].y2 = y2;
+                }
+
+                for(var i = 0; i < 6; i++) {
+                    var t = 0;
+                    var x = 0;
+                    var y = 0;
+                    var dT = Math.PI / 360 * 5;
+                    var dR = 4;
+                    var count = 0;
+                    var thisX1 = this.words[i].x1;
+                    var thisX2 = this.words[i].x2;
+                    var thisY1 = this.words[i].y1;
+                    var thisY2 = this.words[i].y2;
+                    while(++count < 10000){
+                        var overlap = false;
+
+                        thisX1 += x;
+                        thisX2 += x;
+                        thisY1 += y;
+                        thisY2 += y;
+
+                        for(var j = 0; j < 6; j++){
+                            if(!(thisX2 < this.words[j].x1||this.words[j].x2<thisX1||
+                                    thisY2<this.words[j].y1||thisY1>this.words[j].y2)){
+                                //console.log("over!");
+                                overlap = true;
+                                break;
+                            }
+                        }
+                        var out = false;
+//                        if(thisX1 < 0 || thisX2 > 400 || thisY1 < 0 ||thisY2 > 400){
+//                            out = true;
+//                            x = y = 0;
+//                        }
+                        if(overlap == false && out == false) {
+                            console.log("hahahahaha");
+                            break;
+                        }
+                        t += dT;
+                        x = dR * t * Math.cos(t);
+                        y = dR * t * Math.sin(t);
+                        count++;
+                        console.log("x="+x +" y="+ y+ " nowX= "+thisX1+" nowY=" + thisY1);
+
+                    }
+                    this.words[i].text.setAttribute("x", thisX2 + x + this.words[i].text.getBBox().width - 150);
+                    this.words[i].text.setAttribute("y", thisY2 + y + this.words[i].text.getBBox().height*1.4 - 150);
                 }
             }
         }
