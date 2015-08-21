@@ -29,6 +29,7 @@
             this.colors = input.colors;
         }
 
+
         Stream.prototype ={
             start: function(){
                 var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -140,7 +141,7 @@
 </head>
 <body>
 <script>
-    var context = {};
+    var context = { };
     var layers = context.layers = [];
     var number = context.number = 20;
     var points = context.points = 400;
