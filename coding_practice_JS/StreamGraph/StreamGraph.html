@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script>
+        //this function use the method on http://bl.ocks.org/mbostock/4060954 from Lee Byron's test data generator
+        function bumpLayer(n){
+            function bump(a){
+                var x = 1 / (0.1 + Math.random());
+                var y = 2 * Math.random() - 0.5;
+                var z = 10 / (.1 + Math.random());
+
+                for (var i = 0; i < n; i++){
+                    var w = (i / n - y) * z;
+                    a[i] += x * Math.exp(-w * w);
+                }
+            }
+            var a = [], i;
+            for (i = 0; i < n; ++i) a[i] = 0;
+            for (i = 0; i < 5; ++i) bump(a);
+            return a.map(function(d, i) { return {x: i, y: Math.max(0, d)}; });
+        }
+
+        function Stream(input){
+            this.layers = input.layers;
+            this.number = input.number;
+            this.points = input.points;
+            this.colors = input.colors;
+        }
+
+        Stream.prototype ={
+            start: function(){
+                var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+                svg.setAttribute("width", "400");
+                svg.setAttribute("height", "400");
+                document.body.appendChild(svg);
+                var first = [];
+
+                for(var i = 0; i < number; i++)
+                    for(var j = 0; j < points; j++){
+                        this.layers[i][j].g = null;
+                        this.layers[i][j].f = this.layers[i][j].y;
+                    }
+                for(var i = 0; i < number; i++)
+                    for(var j = 0; j < points; j++){
+                        for(var k = 0; k <= i; k++)
+                            this.layers[i][j].g += this.layers[k][j].f;
+                    }
+
+                for(var i = 0; i < points - 1; i++){
+                    if(i == 0){
+                        first[i] = {};
+                        first[i].x = i;
+
+                        first[i].f = null;
+                        for( var j = 1; j < number; j++ ){
+                            first[i].f += (number-j+1) * this.layers[j][i].f;
+                        }
+                        first[i].f /= -(number + 1 );
+                        //first[i].df = 0;
+                        //console.log(first[i].f);
+                        first[i].g = 0;
+                    }
+
+                    first[i].df = 0;
+                    for( var j = 0; j < number; j++ ){
+                        var count = 0;
+                        if(j > 1)
+                            for(var k = 1; k < j; k++)
+                                count += this.layers[k][i+1].f - this.layers[k][i].f;
+                        first[i].df += this.layers[j][i].f * ( 0.5 * ( this.layers[j][i + 1].f - this.layers[j][i].f) + count );
+                    }
+                    first[i].df /= - this.layers[number - 1][i].g;
+                    //console.log(first[i].f);
+                    first[i + 1] = {};
+                    first[i + 1].g = 0;
+                    first[i + 1].f = first[i].f + first[i].df;
+                    first[i + 1].x = i + 1;
+                }
+                this.layers[number] = first;
+                for( var i = number; i >= 0; i-- )
+                {
+                    this.layers[i + 1] = this.layers[i];
+                }
+                this.layers[0] = this.layers[number + 1];
+                var dx = 400/(points-1);
+                var top = 0;
+                for( var i = 0; i < points; i++ )
+                    if( top < this.layers[number][i].g + this.layers[0][i].f )
+                        top = this.layers[number][i].g + this.layers[0][i].f;
+
+                var bottom = 0;
+                for( var i = 0; i < points; i++ )
+                    if( bottom > this.layers[0][i].f )
+                        bottom = this.layers[0][i].f;
+
+                //var max = top;
+                var max;
+                if(top > -bottom)
+                    max = top;
+                else
+                    max = -bottom;
+
+                for( var i = 0; i <= number; i++ )
+                {
+                    for( var j = 0; j < points; j++ )
+                    {
+                        this.layers[i][j].x = this.layers[i][j].x * dx;
+                        this.layers[i][j].y = ( 400 / 2 + 200/max * ( this.layers[i][j].g + this.layers[0][j].f ) );
+                    }
+                }
+                for(var i = number; i >= 0; i--)
+                {
+                    var pathTmp = [];
+                    var pathString;
+                    var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    pathTmp.push("M0 0");
+                    pathTmp.push("L"+this.layers[i][0].x+" "+this.layers[i][0].y);
+                    //path.setAttribute("d", "M"+this.layers[i][0].x+" "+this.layers[i][0].y);
+                    for(var j = 1; j < points; j++)
+                    {
+                        pathTmp.push("L"+this.layers[i][j].x+" "+this.layers[i][j].y);
+                    }
+                    pathTmp.push("L400 0");
+                    pathTmp.push("Z");
+                    pathString = pathTmp.join(",");
+                    pathString = pathString.replace(/,/g," ");
+                    path.setAttribute("d", pathString);
+
+                    path.setAttribute("fill", (i == 0)?"#fff":this.colors[i % 6]);
+
+                    console.log(pathString);
+                    svg.appendChild(path);
+                }
+
+            }
+        }
+    </script>
+</head>
+<body>
+<script>
+    var context = {};
+    var layers = context.layers = [];
+    var number = context.number = 20;
+    var points = context.points = 400;
+    var colors = context.colors = ["#642100", "#A23400", "#D94600", "#FF5809", "#FF8F59", "#FFAD86"];
+
+    for(var i = 0; i < number; i++)
+    {
+        layers.push(bumpLayer(400));       //the number of the sample points!
+    }
+    var sg = new Stream(context);
+    sg.start();
+</script>
+</body>
+</html>
