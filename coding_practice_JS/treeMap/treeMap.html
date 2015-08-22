@@ -7,15 +7,36 @@
     <title></title>
 </head>
 <script>
+    function getSize(dataset){
+        if(dataset.children == null)
+            return dataset.size;
+        var tmpSize = 0;
+        for(var i = 0; i < dataset.children.length; i++){
+            tmpSize += getSize(dataset.children[i]);
+        }
+        dataset.size = tmpSize;
+        console.log(dataset.name);
+        console.log(dataset.size);
+        return tmpSize;
+    }
     function Tree(dataset){
 
+    }
+    Tree.prototype = {
+        start: function(){
+
+        }
     }
 </script>
 <body>
 <script>
-    var dataset = [];
-    for()
+    var dataset = flare;
     var tree = new Tree(dataset);
+    getSize(dataset);
+    for(var i = 0; i < dataset.children.length; i++){
+        if(dataset.children[i].children == null)
+            console.log(dataset.children[i].name);
+    }
 </script>
 </body>
 </html>
