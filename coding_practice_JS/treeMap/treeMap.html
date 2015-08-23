@@ -7,11 +7,11 @@
     <title></title>
 </head>
 <script>
-    function getSize(dataset){
+    function getSize(dataset,width,height){
         if(dataset.children == null) {
             //console.log(dataset.name);
             //console.log(dataset.size);
-            dataset.size /= 10;
+            //dataset.size /= 2;
             return dataset.size;
         }
         var tmpSize = 0;
@@ -88,6 +88,16 @@
                 return false;
             }
         },
+        suitSvg: function (dataset, width, height) {
+            var size = 0;
+            for(var i = 0; i < dataset.children.length; i++){
+                size += dataset.children[i].size;
+            }
+            for(var i = 0; i < dataset.children.length; i++){
+                dataset.children[i].size = dataset.children[i].size/size*width*height;
+                //console.log("the new size =" + dataset.children[i].size);
+            }
+        },
         draw: function(rectAttr, svg){
             var rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
             rect.setAttribute("x", rectAttr.rectX);
@@ -101,19 +111,20 @@
         start: function(){
             var rects = [];
             rects.push({
-                rectX: 0, rectY: 0, rectWidth: 400, rectHeight: 400, size: 0, color: colorSet[0]
+                rectX: 0, rectY: 0, rectWidth: 500, rectHeight: 400, size: 0, color: colorSet[0]
             });
 //            rects.push({
 //                rectX: 0, rectY: 0, rectWidth: 400, rectHeight: 400, size: 0, color: colorSet[0]
 //            });
             //console.log(rects[0]);
-            var width = 400;
+            var width = 600;
             var height = 400;
             var x = 0, y = 0;
             var type = true;
             var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-            svg.setAttribute("width", "400");
-            svg.setAttribute("height", "400");
+            svg.setAttribute("width", width);
+            svg.setAttribute("height", height);
+            this.suitSvg(dataset, width, height);
             document.body.appendChild(svg);
 
             for(var l = 0; l < dataset.children.length; l++){
@@ -125,6 +136,10 @@
             rects[0].rectY = 0;
             rects[0].rectHeight = 400;
             rects[0].rectWidth = rects[0].rectWidth = rects[0].size/rects[0].rectHeight;
+
+            x = rects[0].rectX + rects[0].rectWidth;
+            y = rects[0].rectY;
+            width -= rects[0].rectWidth;
             //this.draw(rects[0], svg);
 
             for(var i = 1; i < 10; i++){
@@ -184,7 +199,7 @@
                         height -= rectTmp.rectHeight;
                     }
                     rects.push(rectTmp);
-                    console.log(rects);
+                    //console.log(rects);
                 }
                 else{
                     //console.log(rects.length);
@@ -192,21 +207,40 @@
                         //console.log(rects[j]);
                         this.draw(rects[j], svg);
                     }
+                    var lengthTmp = rects.length;
+                    if(lengthTmp == 1 && i>2){
+                        if (type == true) {
+                            x = rects[0].rectX + rects[0].rectWidth;
+                            y = rects[0].rectY;
+                            width -= rects[0].rectWidth;
+                        }
+                        else {
+                            x = rects[0].rectX;
+                            y = rects[0].rectY + rects[0].rectHeight;
+                            height -= rects[0].rectHeight;
+                        }
+                    }
                     rects = [];
                     //console.log(rects);
                     rectTmp.rectX = x;
                     rectTmp.rectY = y;
                     console.log("svg:x,y,width,height:"+x+" "+y+" "+width + " "+height);
                     if(width <= height) {
-                        type = false;
+                        //type = false;
                         rectTmp.rectWidth = width;
                         rectTmp.rectHeight = rectTmp.size / rectTmp.rectWidth;
                     }
                     else{
-                        type = true;
+                       // type = true;
                         rectTmp.rectHeight = height;
                         rectTmp.rectWidth = rectTmp.size / rectTmp.rectHeight;
                     }
+                    console.log("hahahaha"+x+" "+y);
+                    if(width <= height)
+                        type = false;
+                    else
+                        type = true;
+                    console.log(type);
                     console.log("push rect WH:"+rectTmp.rectWidth + " "+ rectTmp.rectHeight);
                     rects.push(rectTmp);
                 }
