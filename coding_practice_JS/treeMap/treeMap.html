@@ -36,14 +36,45 @@
 
     }
     Tree.prototype = {
-        tryIn: function(rectAttr0, rectAttr){
+        /*tryIn: function(rectAttr0, rectAttr, type){
             var coe = Math.max(rectAttr0.rectHeight, rectAttr0.rectWidth)/Math.min(rectAttr0.rectHeight, rectAttr0.rectWidth);
-            var fixEdge = Math.min(rectAttr0.rectHeight, rectAttr0.rectWidth);
-            console.log(coe+" "+Math.max(fixEdge, rectAttr.size/fixEdge)/Math.min(fixEdge, rectAttr.size/fixEdge));
+            //var fixEdge = Math.min(rectAttr0.rectHeight, rectAttr0.rectWidth);
+            var fixEdge = (type == true)?(rectAttr0.rectWidth):(rectAttr0.rectHeight);
+            //console.log(type);
+            console.log("old long edge = "+Math.max(rectAttr0.rectHeight, rectAttr0.rectWidth));
+            console.log("old short edge = "+Math.min(rectAttr0.rectHeight, rectAttr0.rectWidth));
+            console.log("fixed edge ="+fixEdge);
+            console.log("new coe and old coe = "+Math.max(fixEdge, rectAttr.size/fixEdge)/Math.min(fixEdge, rectAttr.size/fixEdge)+" "+coe);
+
             if(Math.max(fixEdge, rectAttr.size/fixEdge)/Math.min(fixEdge, rectAttr.size/fixEdge) <= coe) {
                 //console.log("inTrue");
                 return true;
             }
+            else
+                return false;
+        },*/
+        tryIn: function(rects, rectTmp, type){
+            var size = 0;
+            var testOldHeight = rects[rects.length-1].rectHeight;
+            var testOldWidth = rects[rects.length-1].rectWidth;
+            var coe = Math.max(testOldHeight,testOldWidth)/Math.min(testOldHeight,testOldWidth);
+            for(var j = 0; j < rects.length; j++)
+                size += rects[j].size;
+            console.log(size);
+            if(type == true){
+                testOldHeight *= size / (size + rectTmp.size);
+                testOldWidth = rects[rects.length-1].size / testOldHeight;
+                rectTmp.rectWidth = testOldWidth;
+                rectTmp.rectHeight = rectTmp.size / rectTmp.rectWidth;
+            }
+            else{
+                testOldWidth *= size / (size + rectTmp.size);
+                testOldHeight = rects[rects.length-1].size / testOldWidth;
+                rectTmp.rectHeight = testOldHeight;
+                rectTmp.rectWidth = rectTmp.size / rectTmp.rectHeight;
+            }
+            if(Math.max(rectTmp.rectWidth,rectTmp.rectHeight)/Math.min(rectTmp.rectWidth,rectTmp.rectHeight) <= coe)
+                return true;
             else
                 return false;
         },
@@ -69,6 +100,7 @@
             var width = 400;
             var height = 400;
             var x = 0, y = 0;
+            var type = true;
             var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             svg.setAttribute("width", "400");
             svg.setAttribute("height", "400");
@@ -82,46 +114,47 @@
             rects[0].rectX = 0;
             rects[0].rectY = 0;
             rects[0].rectHeight = 400;
-            rects[0].rectWidth = rects[0].rectWidth = rects[0].size/10/rects[0].rectHeight;
-            //console.log(rects);
+            rects[0].rectWidth = rects[0].rectWidth = rects[0].size/rects[0].rectHeight;
             //this.draw(rects[0], svg);
 
-            for(var i = 1; i < 10; i++) {
+            for(var i = 1; i < 10; i++){
                 var rectTmp = {};
                 //rectTmp.rectWidth = (rects[last].rectWidth<=rects[last].rectHeight)?(rects[last].rectWidth):();
                 rectTmp.size = dataset.children[i].size;
                 rectTmp.color = colorSet[i];
-                console.log(rects[rects.length-1]);
-                console.log(rectTmp);
-                if(this.tryIn(rects[rects.length-1], rectTmp) == true){
-                    console.log(rects[rects.length-1]);
-                    //console.log(rects.length);
-                    //console.log("true!!!");
+                console.log("new size = "+rectTmp.size);
+                if(this.tryIn(/*rects[rects.length-1]*/rects, rectTmp, type) == true){
+                    console.log("in there, is true!");
                     var size = 0;
                     for(var j = 0; j < rects.length; j++){
                         size += rects[j].size;
                     }
-
-                    //console.log(size);
-
-                    if(rects[rects.length-1].rectWidth<=rects[rects.length-1].rectHeight){
+                    console.log(size);
+                    if(type == true){
+                        console.log(rectTmp.size);
                         for(var j = 0; j < rects.length; j++){
                             rects[j].rectHeight *= size / (size + rectTmp.size);
                             rects[j].rectWidth = rects[j].size / rects[j].rectHeight;
+                            console.log(rects[j].rectWidth + " "+ rects[j].rectHeight);
                         }
                         rectTmp.rectWidth = rects[0].rectWidth;
                         rectTmp.rectHeight = rectTmp.size / rectTmp.rectWidth;
                         rectTmp.rectX = rects[rects.length-1].rectX;
                         rectTmp.rectY = rects[rects.length-1].rectY;
+                        console.log(rectTmp.rectWidth + " " + rectTmp.rectHeight);
+                        console.log(rectTmp.rectX + " " + rectTmp.rectY);
                         for(var j = 0; j < rects.length; j++){
                             if(j == 0)
                                 rects[j].rectY = rectTmp.rectY + rectTmp.rectHeight;
                             else
                                 rects[j].rectY = rects[j-1].rectY + rects[j-1].rectHeight;
+
+                            console.log(rects[j].rectX + " " + rects[j].rectY);
                         }
-                        x = rects[0].rectX + rects[0].rectWidth;
-                        y = rects[0].rectY;
-                        width -= rects[0].rectWidth;
+                        x = rectTmp.rectX + rectTmp.rectWidth;
+                        y = rectTmp.rectY;
+                        width -= rectTmp.rectWidth;
+                        console.log(x+" "+y+" "+width+" "+height);
                     }
                     else{
                         for( var j = 0; j < rects.length; j++){
@@ -143,7 +176,7 @@
                         height -= rects[0].rectHeight;
                     }
                     rects.push(rectTmp);
-                   // console.log(rectTmp);
+                    console.log(rects);
                 }
                 else{
                     //console.log(rects.length);
@@ -155,14 +188,19 @@
                     //console.log(rects);
                     rectTmp.rectX = x;
                     rectTmp.rectY = y;
+                    console.log(width);
+                    console.log(height);
                     if(width <= height) {
+                        type = false;
                         rectTmp.rectWidth = width;
                         rectTmp.rectHeight = rectTmp.size / rectTmp.rectWidth;
                     }
                     else{
+                        type = true;
                         rectTmp.rectHeight = height;
                         rectTmp.rectWidth = rectTmp.size / rectTmp.rectHeight;
                     }
+                    console.log(rectTmp.rectWidth + " "+ rectTmp.rectHeight);
                     rects.push(rectTmp);
                 }
             }
