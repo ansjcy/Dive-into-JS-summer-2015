@@ -11,6 +11,7 @@
         if(dataset.children == null) {
             //console.log(dataset.name);
             //console.log(dataset.size);
+            dataset.size /= 10;
             return dataset.size;
         }
         var tmpSize = 0;
@@ -38,8 +39,11 @@
         tryIn: function(rectAttr0, rectAttr){
             var coe = Math.max(rectAttr0.rectHeight, rectAttr0.rectWidth)/Math.min(rectAttr0.rectHeight, rectAttr0.rectWidth);
             var fixEdge = Math.min(rectAttr0.rectHeight, rectAttr0.rectWidth);
-            if(Math.max(fixEdge, rectAttr.size/fixEdge)/Math.min(fixEdge, rectAttr.size/fixEdge) <= coe)
+            console.log(coe+" "+Math.max(fixEdge, rectAttr.size/fixEdge)/Math.min(fixEdge, rectAttr.size/fixEdge));
+            if(Math.max(fixEdge, rectAttr.size/fixEdge)/Math.min(fixEdge, rectAttr.size/fixEdge) <= coe) {
+                //console.log("inTrue");
                 return true;
+            }
             else
                 return false;
         },
@@ -56,12 +60,12 @@
         start: function(){
             var rects = [];
             rects.push({
-                rectX: 0, rectY: 0, rectWidth: 500, rectHeight: 400, size: 0, color: colorSet[0]
-            });
-            rects.push({
                 rectX: 0, rectY: 0, rectWidth: 400, rectHeight: 400, size: 0, color: colorSet[0]
             });
-            //console.log(rects);
+//            rects.push({
+//                rectX: 0, rectY: 0, rectWidth: 400, rectHeight: 400, size: 0, color: colorSet[0]
+//            });
+            //console.log(rects[0]);
             var width = 400;
             var height = 400;
             var x = 0, y = 0;
@@ -70,24 +74,36 @@
             svg.setAttribute("height", "400");
             document.body.appendChild(svg);
 
+            for(var l = 0; l < dataset.children.length; l++){
+                console.log(dataset.children[l].name+" "+dataset.children[l].size);
+            }
 
+            rects[0].size = dataset.children[0].size;
             rects[0].rectX = 0;
             rects[0].rectY = 0;
             rects[0].rectHeight = 400;
             rects[0].rectWidth = rects[0].rectWidth = rects[0].size/10/rects[0].rectHeight;
-            rects[0].size = dataset.children[0].size;
-            this.draw(rects[0], svg);
+            //console.log(rects);
+            //this.draw(rects[0], svg);
 
             for(var i = 1; i < 10; i++) {
                 var rectTmp = {};
                 //rectTmp.rectWidth = (rects[last].rectWidth<=rects[last].rectHeight)?(rects[last].rectWidth):();
                 rectTmp.size = dataset.children[i].size;
                 rectTmp.color = colorSet[i];
+                console.log(rects[rects.length-1]);
+                console.log(rectTmp);
                 if(this.tryIn(rects[rects.length-1], rectTmp) == true){
+                    console.log(rects[rects.length-1]);
+                    //console.log(rects.length);
+                    //console.log("true!!!");
                     var size = 0;
                     for(var j = 0; j < rects.length; j++){
                         size += rects[j].size;
                     }
+
+                    //console.log(size);
+
                     if(rects[rects.length-1].rectWidth<=rects[rects.length-1].rectHeight){
                         for(var j = 0; j < rects.length; j++){
                             rects[j].rectHeight *= size / (size + rectTmp.size);
@@ -127,11 +143,16 @@
                         height -= rects[0].rectHeight;
                     }
                     rects.push(rectTmp);
+                   // console.log(rectTmp);
                 }
                 else{
-                    for(var j = 0; j < rects.length; j++)
+                    //console.log(rects.length);
+                    for(var j = 0; j < rects.length; j++) {
+                        //console.log(rects[j]);
                         this.draw(rects[j], svg);
+                    }
                     rects = [];
+                    //console.log(rects);
                     rectTmp.rectX = x;
                     rectTmp.rectY = y;
                     if(width <= height) {
@@ -151,7 +172,7 @@
 <body>
 <script>
     var dataset = flare;
-    var colorSet = ["#FF2D2D","#FF77FF","#8600FF","#2894FF","#00FFFF","#00BB00","#F9F900","#FF8000","#AFAF61","#8F4586"];
+    var colorSet = ["#AFAF61","#00BB00","#FF77FF","#00FFFF","#FF2D2D","#8600FF","#2894FF","#F9F900","#FF8000","#8F4586"];
     getSize(dataset);
     sort(dataset);
     var tree = new Tree(dataset);
