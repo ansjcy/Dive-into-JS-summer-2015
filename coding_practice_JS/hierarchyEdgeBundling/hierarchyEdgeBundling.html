@@ -281,11 +281,32 @@
                             }
                         }
                     }
-                    data[i].export = ex;
+                    data[i].exports = ex;
+                }
+            },
+            getIndex: function(){
+                for(var i in data){
+                    for(var j in data[i].imports){
+                        for(var k in data){
+//                            console.log(data[k].name);
+//                            console.log(data[i].imports[j]);
+                            if(data[k].name == data[i].imports[j]) {
+                             data[i].imports[j] = k;
+                            }
+                        }
+                    }
+                    //console.log(data[i]);
+                    for(var j in data[i].exports){
+                        for(var k in data){
+                            if(data[k].name == data[i].exports[j])
+                                data[i].exports[j] = k;
+                        }
+                    }
                 }
             },
             start: function(){
                 this.getExport();
+                this.getIndex();
                 var interval = this.getAngle();
                 console.log(interval);
                 this.getCoordinate(interval);
@@ -300,8 +321,8 @@
                 circle.setAttribute("cy", "500");
                 circle.setAttribute("r", "400");
                 circle.setAttribute("fill", "none");
-                circle.setAttribute("stroke-width", "3px");
-                circle.setAttribute("stroke", "blue");
+                circle.setAttribute("stroke-width", "2px");
+                circle.setAttribute("stroke", "white");
                 svg.appendChild(circle);
 
                 for(var i in data){
@@ -311,6 +332,24 @@
                     text.innerHTML = data[i].name.split(".")[data[i].name.split(".").length-1];
                     text.setAttribute("transform", "rotate("+((data[i].angle/(2*Math.PI)*360)-90)+","+data[i].x+","+data[i].y+")");
                     svg.appendChild(text);
+                }
+                for(var i = 0; i < data.length; i++){
+                    for(var j in data[i].imports) {
+                        var curve = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                        curve.setAttribute("d", "M" + data[i].x + " " + data[i].y + " Q500 500 " + data[data[i].imports[j]].x + " " + data[data[i].imports[j]].y);
+                        curve.setAttribute("fill", "none");
+                        curve.setAttribute("stroke-width", "2px");
+                        curve.setAttribute("stroke", "green");
+                        svg.appendChild(curve);
+                    }
+                    for(var j in data[i].exports) {
+                        var curve = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                        curve.setAttribute("d", "M" + data[i].x + " " + data[i].y + " Q500 500 " + data[data[i].exports[j]].x + " " + data[data[i].exports[j]].y);
+                        curve.setAttribute("fill", "none");
+                        curve.setAttribute("stroke-width", "2px");
+                        curve.setAttribute("stroke", "red");
+                        svg.appendChild(curve);
+                    }
                 }
             }
         }
