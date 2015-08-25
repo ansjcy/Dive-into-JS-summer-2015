@@ -448,89 +448,107 @@
 
                 this.getParentPosition(data);
 
-                for(var i = 0; i < data.length; i++) {
-                    if(data[i].name.length >= 2) {
-                        var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                        circle.setAttribute("cx", data[i].parent.x);
-                        circle.setAttribute("cy", data[i].parent.y);
-                        circle.setAttribute("r", "10");
-                        circle.setAttribute("fill", "none");
-                        circle.setAttribute("stroke-width", "2px");
-                        circle.setAttribute("stroke", "black");
-                        svg.appendChild(circle);
-                    }
-                }
-
-                for(var i = 0; i < data.length; i++) {
-                    if(data[i].name.length >= 3) {
-                        var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                        circle.setAttribute("cx", data[i].parent.parent.x);
-                        circle.setAttribute("cy", data[i].parent.parent.y);
-                        circle.setAttribute("r", "10");
-                        circle.setAttribute("fill", "none");
-                        circle.setAttribute("stroke-width", "2px");
-                        circle.setAttribute("stroke", "black");
-                        svg.appendChild(circle);
-                    }
-                }
-
-//                for(var i in data){
-//                    console.log(i)
-//                    if(data[i].name.length>=2) {
-//                        console.log(data[i].parent.name);
-//                        if (data[i].name.length>=3) {
-//                            console.log(data[i].parent.parent.name);
-//                            if (data[i].name.length>=4) {
-//                                console.log(data[i].parent.parent.parent.name);
-//                                if (data[i].name.length>=5)
-//                                    console.log(data[i].parent.parent.parent.parent.name);
-//                            }
-//                        }
+//                for(var i = 0; i < data.length; i++) {
+//                    if(data[i].name.length >= 2) {
+//                        var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+//                        circle.setAttribute("cx", data[i].parent.x);
+//                        circle.setAttribute("cy", data[i].parent.y);
+//                        circle.setAttribute("r", "10");
+//                        circle.setAttribute("fill", "none");
+//                        circle.setAttribute("stroke-width", "2px");
+//                        circle.setAttribute("stroke", "black");
+//                        svg.appendChild(circle);
 //                    }
+//                }
 //
+//                for(var i = 0; i < data.length; i++) {
+//                    if (data[i].name.length >= 3) {
+//                        var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+//                        circle.setAttribute("cx", data[i].parent.parent.x);
+//                        circle.setAttribute("cy", data[i].parent.parent.y);
+//                        circle.setAttribute("r", "10");
+//                        circle.setAttribute("fill", "none");
+//                        circle.setAttribute("stroke-width", "2px");
+//                        circle.setAttribute("stroke", "black");
+//                        svg.appendChild(circle);
+//                    }
+//                }
+//                for(var i = 0; i < data.length; i++) {
+//                    if(data[i].name.length >= 4) {
+//                        var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+//                        circle.setAttribute("cx", data[i].parent.parent.parent.x);
+//                        circle.setAttribute("cy", data[i].parent.parent.parent.y);
+//                        circle.setAttribute("r", "10");
+//                        circle.setAttribute("fill", "none");
+//                        circle.setAttribute("stroke-width", "2px");
+//                        circle.setAttribute("stroke", "black");
+//                        svg.appendChild(circle);
+//                    }
 //                }
 
-                for(var i = 0; i < data.length; i++) {
-                    if(data[i].name.length >= 4) {
-                        var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-                        circle.setAttribute("cx", data[i].parent.parent.parent.x);
-                        circle.setAttribute("cy", data[i].parent.parent.parent.y);
-                        circle.setAttribute("r", "10");
-                        circle.setAttribute("fill", "none");
-                        circle.setAttribute("stroke-width", "2px");
-                        circle.setAttribute("stroke", "black");
-                        svg.appendChild(circle);
-                    }
-                }
-
-                for(var i = 0; i < 1; i++){
+                for(var i = 0; i < data.length; i++){
                     for(var j in data[i].imports) {
                         var parent = data[i].parent;
+                        var parentIm = data[data[i].imports[j]].parent;
                         var curve = document.createElementNS("http://www.w3.org/2000/svg", "path");
                         var thisX, thisY;
-                        if(data[data[i].imports[j]].name.length == 3){
-                            for(var )
-                        }
-                        else if(data[data[i].imports[j]].name.length == 4){
-
-                        }
-                        else if(data[data[i].imports[j]].name.length == 5){
-
+                        var flag = false;
+                        for(var k = 0; k < data[data[i].imports[j]].name.length-1; k++){
+                            for(var l = 0; l < data[i].name.length-1; l++){
+//                                console.log(parent.name);
+//                                console.log(parentIm.name);
+                                if(parent.name == parentIm.name){
+                                    thisX = parent.x;
+                                    thisY = parent.y;
+                                    flag = true;
+                                    break;
+                                }
+                                parent = parent.parent;
+                                console.log(l);
+                                console.log(parent);
+                            }
+                            if(flag == true)
+                                break;
+                            parent = data[i].parent;
+                            parentIm = parentIm.parent;
                         }
                         curve.setAttribute("d", "M" + data[i].x + " " + data[i].y + " Q"+thisX+" "+thisY+" "+data[data[i].imports[j]].x + " " + data[data[i].imports[j]].y);
                         curve.setAttribute("fill", "none");
-                        curve.setAttribute("stroke-width", "2px");
+                        curve.setAttribute("stroke-width", "0.5px");
                         curve.setAttribute("stroke", "green");
                         svg.appendChild(curve);
                     }
-//                    for(var j in data[i].exports) {
-//                        var curve = document.createElementNS("http://www.w3.org/2000/svg", "path");
-//                        curve.setAttribute("d", "M" + data[i].x + " " + data[i].y + " Q500 500 " + data[data[i].exports[j]].x + " " + data[data[i].exports[j]].y);
-//                        curve.setAttribute("fill", "none");
-//                        curve.setAttribute("stroke-width", "2px");
-//                        curve.setAttribute("stroke", "red");
-//                        svg.appendChild(curve);
-//                    }
+                    for(var j in data[i].exports) {
+                        var parent = data[i].parent;
+                        var parentIm = data[data[i].exports[j]].parent;
+                        var curve = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                        var thisX, thisY;
+                        var flag = false;
+                        for(var k = 0; k < data[data[i].exports[j]].name.length-1; k++){
+                            for(var l = 0; l < data[i].name.length-1; l++){
+//                                console.log(parent.name);
+//                                console.log(parentIm.name);
+                                if(parent.name == parentIm.name){
+                                    thisX = parent.x;
+                                    thisY = parent.y;
+                                    flag = true;
+                                    break;
+                                }
+                                parent = parent.parent;
+                                console.log(l);
+                                console.log(parent);
+                            }
+                            if(flag == true)
+                                break;
+                            parent = data[i].parent;
+                            parentIm = parentIm.parent;
+                        }
+                        curve.setAttribute("d", "M" + data[i].x + " " + data[i].y + " Q"+thisX+" "+thisY+" "+data[data[i].exports[j]].x + " " + data[data[i].exports[j]].y);
+                        curve.setAttribute("fill", "none");
+                        curve.setAttribute("stroke-width", "0.5px");
+                        curve.setAttribute("stroke", "red");
+                        svg.appendChild(curve);
+                    }
                 }
             }
         }
