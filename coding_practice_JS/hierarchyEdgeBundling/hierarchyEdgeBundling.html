@@ -236,9 +236,13 @@
             getAngle: function(){
                 var group = 0;
                 var total = data.length;
-                var formerGroupName = data[0].name.split(".")[data[0].name.split(".").length-2];
-                for(var i in data){
-                    var groupName = data[i].name.split(".")[data[i].name.split(".").length-2];
+                data[0].group = 0;
+                data[0].name = data[0].name.split(".");
+                var formerGroupName = data[0].name[data[0].name.length-2];
+                //var formerGroupName = data[0].name.split(".")[data[0].name.split(".").length-2];
+                for(var i  = 1; i < data.length; i++){
+                    data[i].name = data[i].name.split(".");
+                    var groupName = data[i].name[data[i].name.length-2];
                     if(groupName == formerGroupName) {
                         data[i].group = group;
                         continue;
@@ -255,7 +259,7 @@
             getCoordinate: function(angle){
                 var angleRecord = 0;
                 data[0].x = 500;
-                data[0].y = 0;
+                data[0].y = 100;
                 data[0].angle = 0;
                 for(var i = 1; i < data.length; i++){
                     if(data[i].group == data[i-1].group) {
@@ -286,12 +290,19 @@
             },
             getIndex: function(){
                 for(var i in data){
+                    data[i].importsName = [];
+                    data[i].exportsName = [];
+                    for(var l = 0; l < data[i].imports.length; l++)
+                        data[i].importsName[l] = data[i].imports[l].split(".");
+                    for(var l = 0; l < data[i].exports.length; l++)
+                        data[i].exportsName[l] = data[i].exports[l].split(".");
+
                     for(var j in data[i].imports){
                         for(var k in data){
 //                            console.log(data[k].name);
 //                            console.log(data[i].imports[j]);
                             if(data[k].name == data[i].imports[j]) {
-                             data[i].imports[j] = k;
+                                data[i].imports[j] = k;
                             }
                         }
                     }
@@ -302,6 +313,107 @@
                                 data[i].exports[j] = k;
                         }
                     }
+                }
+            },
+            getMaxNameNum: function(){
+                var num = 0;
+                for(var i in data){
+                    if(data[i].name.length > num)
+                        num = data[i].name.length;
+                }
+                return num;
+            },
+            getParentPosition: function(data){
+                var parent = {};
+                var last = 0;
+                for(var count = 2; count < 6; count++) {
+                    for (var i = 0; i < data.length; i++) {
+                        if (data[i].name[data[i].name.length - count] == undefined || data[i].name[data[i].name.length - count] == data[last].name[data[last].name.length - count])
+                            continue;
+                        else {
+                            var alpha1 = data[last].angle;
+                            var alpha2 = data[i - 1].angle;
+                            var theta = (alpha1 + alpha2) / 2;
+                            //console.log(alpha1 + " " + alpha2 + " " + theta);
+                            parent.name = data[last].name[data[last].name.length - count];
+//                            console.log(last);
+//                            console.log(i - 1);
+//                            console.log(parent.name);
+                            if(parent.name == "flare"){
+                                parent.x = 500;
+                                parent.y = 500;
+                            }
+                            else {
+                                parent.x = 500 + (5 - count) * 100 * Math.sin(theta);
+                                parent.y = 500 - (5 - count) * 100 * Math.cos(theta);
+                            }
+                            if(count == 2) {
+                                for (var j = last; j < i; j++) {
+                                    data[j].parent = parent;
+                                }
+                            }
+                            else if(count == 3){
+                                for(var j = last; j < i; j++){
+                                    data[j].parent.parent = parent;
+                                }
+                            }
+                            else if(count == 4){
+                                for(var j = last; j < i; j++){
+                                    data[j].parent.parent.parent = parent;
+                                }
+                            }
+                            else if(count == 5){
+                                for(var j = last; j < i; j++){
+                                    data[j].parent.parent.parent.parent = parent;
+                                }
+                            }
+                            parent = {};
+                            last = i;
+                        }
+                    }
+                    var alpha1 = data[last].angle;
+                    var alpha2 = data[i - 1].angle;
+                    var theta = (alpha1 + alpha2) / 2;
+                    parent.name = data[last].name[data[last].name.length - 2];
+                    if(parent.name == "flare"){
+                        parent.x = 500;
+                        parent.y = 500;
+                    }
+                    else {
+                        parent.x = 500 + (5 - count) * 100 * Math.sin(theta);
+                        parent.y = 500 - (5 - count) * 100 * Math.cos(theta);
+                    }
+                    if(count == 2) {
+                        for (var j = last; j < i; j++) {
+                            data[j].parent = parent;
+                        }
+                    }
+                    else if(count == 3){
+                        for(var j = last; j < i; j++){
+                            data[j].parent.parent = parent;
+                        }
+                    }
+                    else if(count == 4){
+                        for(var j = last; j < i; j++){
+                            data[j].parent.parent.parent = parent;
+                        }
+                    }
+                    else if(count == 5){
+                        for(var j = last; j < i; j++){
+                            data[j].parent.parent.parent.parent = parent;
+                        }
+                    }
+                    parent = {};
+                    last = 0;
+                }
+                for(var i = 0; i < data.length; i++){
+                    var flareRecord = {name:"flare", x:500, y:500};
+                    if(data[i].name.length == 3)
+                        data[i].parent.parent = flareRecord;
+                    else if(data[i].name.length == 4)
+                        data[i].parent.parent.parent = flareRecord;
+                    else if(data[i].name.length == 5)
+                        data[i].parent.parent.parent.parent = flareRecord;
                 }
             },
             start: function(){
@@ -329,27 +441,96 @@
                     var text = document.createElementNS("http://www.w3.org/2000/svg", "text");
                     text.setAttribute("x", data[i].x);
                     text.setAttribute("y", data[i].y);
-                    text.innerHTML = data[i].name.split(".")[data[i].name.split(".").length-1];
+                    text.innerHTML = data[i].name[data[i].name.length-1];
                     text.setAttribute("transform", "rotate("+((data[i].angle/(2*Math.PI)*360)-90)+","+data[i].x+","+data[i].y+")");
                     svg.appendChild(text);
                 }
-                for(var i = 0; i < data.length; i++){
+
+                this.getParentPosition(data);
+
+                for(var i = 0; i < data.length; i++) {
+                    if(data[i].name.length >= 2) {
+                        var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                        circle.setAttribute("cx", data[i].parent.x);
+                        circle.setAttribute("cy", data[i].parent.y);
+                        circle.setAttribute("r", "10");
+                        circle.setAttribute("fill", "none");
+                        circle.setAttribute("stroke-width", "2px");
+                        circle.setAttribute("stroke", "black");
+                        svg.appendChild(circle);
+                    }
+                }
+
+                for(var i = 0; i < data.length; i++) {
+                    if(data[i].name.length >= 3) {
+                        var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                        circle.setAttribute("cx", data[i].parent.parent.x);
+                        circle.setAttribute("cy", data[i].parent.parent.y);
+                        circle.setAttribute("r", "10");
+                        circle.setAttribute("fill", "none");
+                        circle.setAttribute("stroke-width", "2px");
+                        circle.setAttribute("stroke", "black");
+                        svg.appendChild(circle);
+                    }
+                }
+
+//                for(var i in data){
+//                    console.log(i)
+//                    if(data[i].name.length>=2) {
+//                        console.log(data[i].parent.name);
+//                        if (data[i].name.length>=3) {
+//                            console.log(data[i].parent.parent.name);
+//                            if (data[i].name.length>=4) {
+//                                console.log(data[i].parent.parent.parent.name);
+//                                if (data[i].name.length>=5)
+//                                    console.log(data[i].parent.parent.parent.parent.name);
+//                            }
+//                        }
+//                    }
+//
+//                }
+
+                for(var i = 0; i < data.length; i++) {
+                    if(data[i].name.length >= 4) {
+                        var circle = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                        circle.setAttribute("cx", data[i].parent.parent.parent.x);
+                        circle.setAttribute("cy", data[i].parent.parent.parent.y);
+                        circle.setAttribute("r", "10");
+                        circle.setAttribute("fill", "none");
+                        circle.setAttribute("stroke-width", "2px");
+                        circle.setAttribute("stroke", "black");
+                        svg.appendChild(circle);
+                    }
+                }
+
+                for(var i = 0; i < 1; i++){
                     for(var j in data[i].imports) {
+                        var parent = data[i].parent;
                         var curve = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                        curve.setAttribute("d", "M" + data[i].x + " " + data[i].y + " Q500 500 " + data[data[i].imports[j]].x + " " + data[data[i].imports[j]].y);
+                        var thisX, thisY;
+                        if(data[data[i].imports[j]].name.length == 3){
+                            for(var )
+                        }
+                        else if(data[data[i].imports[j]].name.length == 4){
+
+                        }
+                        else if(data[data[i].imports[j]].name.length == 5){
+
+                        }
+                        curve.setAttribute("d", "M" + data[i].x + " " + data[i].y + " Q"+thisX+" "+thisY+" "+data[data[i].imports[j]].x + " " + data[data[i].imports[j]].y);
                         curve.setAttribute("fill", "none");
                         curve.setAttribute("stroke-width", "2px");
                         curve.setAttribute("stroke", "green");
                         svg.appendChild(curve);
                     }
-                    for(var j in data[i].exports) {
-                        var curve = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                        curve.setAttribute("d", "M" + data[i].x + " " + data[i].y + " Q500 500 " + data[data[i].exports[j]].x + " " + data[data[i].exports[j]].y);
-                        curve.setAttribute("fill", "none");
-                        curve.setAttribute("stroke-width", "2px");
-                        curve.setAttribute("stroke", "red");
-                        svg.appendChild(curve);
-                    }
+//                    for(var j in data[i].exports) {
+//                        var curve = document.createElementNS("http://www.w3.org/2000/svg", "path");
+//                        curve.setAttribute("d", "M" + data[i].x + " " + data[i].y + " Q500 500 " + data[data[i].exports[j]].x + " " + data[data[i].exports[j]].y);
+//                        curve.setAttribute("fill", "none");
+//                        curve.setAttribute("stroke-width", "2px");
+//                        curve.setAttribute("stroke", "red");
+//                        svg.appendChild(curve);
+//                    }
                 }
             }
         }
