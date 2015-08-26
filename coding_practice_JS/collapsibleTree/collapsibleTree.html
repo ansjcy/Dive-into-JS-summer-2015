@@ -266,14 +266,19 @@
                     return;
             },
             setDeep: function(){
+                data.deep = 0;
+                data.index = 0;
                 for(var i in data.children){
                     data.children[i].deep = 1;
+                    data.children[i].index = i;
                     if(data.children[i].children!=null)
                         for(var j in data.children[i].children){
                             data.children[i].children[j].deep = 2;
+                            data.children[i].children[j].index = j;
                             if(data.children[i].children[j].children!=null)
                                 for(var k in data.children[i].children[j].children){
                                     data.children[i].children[j].children[k].deep = 3;
+                                    data.children[i].children[j].children[k].index = k;
                                 }
                         }
                 }
@@ -299,10 +304,11 @@
                     cal(svg, data);
                 };
                 svg.appendChild(circle);
+
                 data.circle = circle;
                 data.x = 100;
                 data.y = 400;
-                
+
             }
         };
         function cal(svg, data){
@@ -325,22 +331,92 @@
                     circle.setAttribute("fill", (data.children[i].children == null)?"aliceblue":"skyblue");
                     circle.setAttribute("stroke-width", "2px");
                     circle.setAttribute("stroke", "skyblue");
-                    circle.onclick = function(){
-                        cal(svg, data);
-                    };
                     svg.appendChild(circle);
                     data.children[i].circle = circle;
                 }
+                //31, is there any better way???
+                setClick(data, svg);
+
                 data.shown = true;
                 data.circle.setAttribute("fill", "aliceblue");
             }
             else if(data.shown == true){
                 while(svg.lastChild!=data.circle) {
-                    svg.removeChild(svg.lastChild);
+                    console.log(svg.lastChild.deep);
+                    console.log(data.deep);
+                    if(svg.lastChild.deep != data.deep)
+                        svg.removeChild(svg.lastChild);
                 }
-                data.shown = false;data.circle.setAttribute("fill", "skyblue");
+                data.shown = false;
+                data.circle.setAttribute("fill", "skyblue");
             }
 
+        }
+        function setClick(data, svg){
+            if(data.children[0] != null)
+                data.children[0].circle.onclick = function(){cal(svg, data.children[0]);};
+            if(data.children[1] != null)
+                data.children[1].circle.onclick = function(){cal(svg, data.children[1]);};
+            if(data.children[2] != null)
+                data.children[2].circle.onclick = function(){cal(svg, data.children[2]);};
+            if(data.children[3] != null)
+                data.children[3].circle.onclick = function(){cal(svg, data.children[3]);};
+            if(data.children[4] != null)
+                data.children[4].circle.onclick = function(){cal(svg, data.children[4]);};
+            if(data.children[5] != null)
+                data.children[5].circle.onclick = function(){cal(svg, data.children[5]);};
+            if(data.children[6] != null)
+                data.children[6].circle.onclick = function(){cal(svg, data.children[6]);};
+            if(data.children[7] != null)
+                data.children[7].circle.onclick = function(){cal(svg, data.children[7]);};
+            if(data.children[8] != null)
+                data.children[8].circle.onclick = function(){cal(svg, data.children[8]);};
+            if(data.children[9] != null)
+                data.children[9].circle.onclick = function(){cal(svg, data.children[9]);};
+            if(data.children[10] != null)
+                data.children[10].circle.onclick = function(){cal(svg, data.children[10]);};
+            if(data.children[11] != null)
+                data.children[11].circle.onclick = function(){cal(svg, data.children[11]);};
+            if(data.children[12] != null)
+                data.children[12].circle.onclick = function(){cal(svg, data.children[12]);};
+            if(data.children[13] != null)
+                data.children[13].circle.onclick = function(){cal(svg, data.children[13]);};
+            if(data.children[14] != null)
+                data.children[14].circle.onclick = function(){cal(svg, data.children[14]);};
+            if(data.children[15] != null)
+                data.children[15].circle.onclick = function(){cal(svg, data.children[15]);};
+            if(data.children[16] != null)
+                data.children[16].circle.onclick = function(){cal(svg, data.children[16]);};
+            if(data.children[17] != null)
+                data.children[17].circle.onclick = function(){cal(svg, data.children[17]);};
+            if(data.children[18] != null)
+                data.children[18].circle.onclick = function(){cal(svg, data.children[18]);};
+            if(data.children[19] != null)
+                data.children[19].circle.onclick = function(){cal(svg, data.children[19]);};
+            if(data.children[20] != null)
+                data.children[20].circle.onclick = function(){cal(svg, data.children[20]);};
+            if(data.children[21] != null)
+                data.children[21].circle.onclick = function(){cal(svg, data.children[21]);};
+            if(data.children[22] != null)
+                data.children[22].circle.onclick = function(){cal(svg, data.children[22]);};
+            if(data.children[23] != null)
+                data.children[23].circle.onclick = function(){cal(svg, data.children[23]);};
+            if(data.children[24] != null)
+                data.children[24].circle.onclick = function(){cal(svg, data.children[24]);};
+            if(data.children[25] != null)
+                data.children[25].circle.onclick = function(){cal(svg, data.children[25]);};
+            if(data.children[26] != null)
+                data.children[26].circle.onclick = function(){cal(svg, data.children[26]);};
+            if(data.children[27] != null)
+                data.children[27].circle.onclick = function(){cal(svg, data.children[27]);};
+            if(data.children[28] != null)
+                data.children[28].circle.onclick = function(){cal(svg, data.children[28]);};
+            if(data.children[29] != null)
+                data.children[29].circle.onclick = function(){cal(svg, data.children[29]);};
+            if(data.children[30] != null)
+                data.children[30].circle.onclick = function(){cal(svg, data.children[30]);};
+            if(data.children[31] != null)
+                data.children[31].circle.onclick = function(){cal(svg, data.children[31]);};
         }
     </script>
 </head>
