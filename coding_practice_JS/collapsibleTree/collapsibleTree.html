@@ -341,12 +341,21 @@
                 data.circle.setAttribute("fill", "aliceblue");
             }
             else if(data.shown == true){
-                while(svg.lastChild!=data.circle) {
-                    console.log(svg.lastChild.deep);
-                    console.log(data.deep);
-                    if(svg.lastChild.deep != data.deep)
-                        svg.removeChild(svg.lastChild);
+                //console.log(svg.childNodes);
+                for(var i in data.children){
+                    for(var j in svg.childNodes){
+                        if(data.children[i].circle == svg.childNodes[j]){
+                            svg.removeChild(svg.childNodes[j]);
+                            svg.removeChild(svg.childNodes[j-1]);
+                        }
+                    }
                 }
+//                while(svg.lastChild!=data.circle) {
+//                    svg.removeChild(svg.lastChild);
+//                    console.log(svg.lastChild);
+//                    console.log(data.circle);
+//
+//                }
                 data.shown = false;
                 data.circle.setAttribute("fill", "skyblue");
             }
