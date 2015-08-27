@@ -366,7 +366,7 @@
                 yTop = firstNode.y;
             if(lastNode.y < 700)
                 yBot = lastNode.y;
-            intervalTmp = (yBot - yTop)/(nodeNum-1);
+            intervalTmp = (nodeNum == 1)? 0:(yBot - yTop)/(nodeNum-1);
             console.log(firstNode);
             console.log(lastNode);
             console.log(nodeNum);
@@ -401,34 +401,7 @@
                 firstNode = parentNode.children[0];
             }
         }
-//        function findNumOnDeep(deep){
-//            var num = 0;
-//            var node = findParent(findFirstOnDeep(deep));
-//            while(true){
-//                if(node.shown == true)
-//                    num += node.children.length;
-//                if(findNextSibling(node)==null) {
-//                    if(deep == 3){
-//                        var tmpNode = findNextSibling(findParent(node));
-//                        if(tmpNode == undefined)
-//                            break;
-//                        while(tmpNode.shown == false){
-//                            console.log(tmpNode);
-//                            tmpNode = findNextSibling(tmpNode);
-//                            if(tmpNode == undefined)
-//                                break;
-//                        }
-//                        if(tmpNode == undefined)
-//                            break;
-//                        node = tmpNode.children[0];
-//                    }
-//                    else
-//                        break;
-//                }
-//                node = findNextSibling(node);
-//            }
-//            return num;
-//        }
+
         function findNumOnDeep(deep){
             var num = 0;
             if(deep == 0)
