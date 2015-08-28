@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8" />
+    <script type="text/javascript">
+        var dragging = false;
+        var mouseY;
+        var mouseX;
+        function dragInit(node){
+            if(node.className == "drag"){
+                node.onmousedown = down;
+                node.onmousemove = move;
+                node.style.position = "relative";
+                node.style.top = "0px";
+                node.style.left = "0px";
+            }
+            var children = node.childNodes;
+            for(var i = 0; i < children.length; i++){
+                dragInit(children[i]);
+            }
+        }
+        window.onload = function(){
+            dragInit(document);
+            document.onmouseup = up;
+        }
+        function down(event)
+        {
+            event = event || window.event;
+            dragging = true;
+            mouseX = parseInt(event.clientX);
+            mouseY = parseInt(event.clientY);
+            objY = parseInt(this.style.top);
+            objX = parseInt(this.style.left);
+        }
+        function move(event){
+            event = event || window.event;
+            if(dragging == true){
+                var x,y;
+                y = event.clientY - mouseY + objY;
+                x = event.clientX - mouseX + objX;
+                this.style.top = y + "px";
+                this.style.left = x + "px";
+            }
+        }
+        function up(){
+            dragging = false;
+        }
+    </script>
+</head>
+
+<body>
+<div class="drag" style="border:1px solid; width:400px; background:#CCCCCC;">
+    <p>hi</p>
+</div>
+<div class="drag" style="border:1px solid; width:400px; background:#CCCCCC;">
+    <p>hello</p>
+</div>
+</body>
+</html>
+
