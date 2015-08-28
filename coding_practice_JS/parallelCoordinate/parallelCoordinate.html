@@ -1,40 +1,279 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title></title>
+    <meta charset=utf-8" />
+    <style>
+        .box{position:absolute; padding:1px; width: 10px; height: 100px;background:#f0f3f9;}
+        .bar{cursor:move; font-size:1px;width: 30px; height: 20px;text-align: left}
+        .content{width:30px; height:300px;cursor: crosshair;}
+    </style>
+    <style>
+        body,h1,h2,h3,h4,h5,h6,hr,p,blockquote,dl,dt,dd,ul,ol,li,pre,form,fieldset,legend,button,input,textarea,th,td{margin:0;padding:0}
+        html{color:#000;overflow-y:scoll;overflow:-moz-scrollbars-vertical}
+        .div{position:absolute; border:1px dashed blue; width:0px; height:0px;left:0px; top:0px; overflow:hidden;}
+        .retc{position:absolute; border:1px solid #CCCCCC; overflow:hidden; background:#EFEFEF}
+    </style>
+    <script src="food.js"></script>
     <script>
-        function coordinate(){
+        var dragging = false;
+        var mouseY;
+        var mouseX;
+        var max = 1;
+        var xPos = 30;
+        var barNum = 0;
+        var boxNum = 0;
+        function dragInit(node){
+            if(node.className == "box"){
+                node.onmousedown = down;
+                node.onmousemove = move;
+                node.onmouseover = over;
+                node.onmouseup = up;
+                //node.style.position = "relative";
+                node.style.top = "50px";
+                var tmpString = (xPos + (boxNum++)*100).toString();
+                node.style.left = tmpString+"px";
+                node.dragging = false;
+            }
+            if(node.className == "bar"){
 
+            }
+            var children = node.childNodes;
+            for(var i = 0;i < children.length; i++){
+                dragInit(children[i]);
+            }
         }
-        coordinate.prototype = {
-            start: function(){
-                var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-                svg.setAttribute("width", "1600");
-                svg.setAttribute("height", "600");
-                document.body.appendChild(svg);
-                var yTop = 30;
-                var yBot = 450;
-                var xLeft = 30;
-                var interval = 120;
-                for(var i = 0; i < 14; i++) {
-                    var C1 = document.createElementNS("http://www.w3.org/2000/svg", "line");
-                    C1.setAttribute("x1", xLeft + interval * i);
-                    C1.setAttribute("y1", yTop);
-                    C1.setAttribute("x2", xLeft + interval * i);
-                    C1.setAttribute("y2", yBot);
-                    C1.setAttribute("stroke", "black");
-                    C1.setAttribute("stroke-width", "1px");
-                    svg.appendChild(C1);
+        window.onload = function(){
+            dragInit(document);
+            //document.onmouseup = docUp;
+        };
+        function down(event)
+        {
+            event = event || window.event;
+            dragging = true;
+            this.dragging = true;
+            mouseX = parseInt(event.clientX);
+            mouseY = parseInt(event.clientY);
+            objY = parseInt(this.style.top);
+            objX = parseInt(this.style.left);
+            this.style.zIndex = max++;
+        }
+        function move(event){
+            event = event || window.event;
+            if(this.dragging == true && dragging == true){
+                var x,y;
+                y = event.clientY - mouseY + objY;
+                x = event.clientX - mouseX + objX;
+                this.style.top = y + "px";
+                this.style.left = x + "px";
+            }
+        }
+        function up(){
+            this.dragging = false;
+        }
+        function docUp(){
+            dragging = false;
+        }
+        function over(){
+            this.style.cursor = "move";
+        }
+    </script>
+    <script>
+        var wId = "w";
+        var index = 0;
+        var startX = 0, startY = 0;
+        var flag = false;
+        var retcLeft = "0px", retcTop = "0px", retcHeight = "0px", retcWidth = "0px";
+        document.onmousedown = function(e){
+            flag = true;
+            try{
+                var evt = window.event || e;
+                var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+                var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+                startX = evt.clientX + scrollLeft;
+                startY = evt.clientY + scrollTop;
+                index++;
+                var div = document.createElement("div");
+                div.id = wId + index;
+                div.className = "div";
+                div.style.marginLeft = startX + "px";
+                div.style.marginTop = startY + "px";
+                document.body.appendChild(div);
+            }catch(e){
+                //alert(e);
+            }
+        }
+        document.onmouseup = function(){
+            try{
+                console.log($(wId + index).style.marginLeft);
+                //document.body.removeChild($(wId + index));
+//                var div = document.createElement("div");
+//                div.className = "retc";
+//                div.style.marginLeft = retcLeft;
+//                div.style.marginTop = retcTop;
+//                div.style.width = retcWidth;
+//                div.style.height = retcHeight;
+//                document.body.appendChild(div);
+            }catch(e){
+                //alert(e);
+            }
+            flag = false;
+        }
+        document.onmousemove = function(e){
+            if(flag){
+                try{
+                    var evt = window.event || e;
+                    var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+                    var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+                    retcLeft = (startX - evt.clientX - scrollLeft > 0 ? evt.clientX + scrollLeft : startX) + "px";
+                    retcTop = (startY - evt.clientY - scrollTop > 0 ? evt.clientY + scrollTop : startY) + "px";
+                    retcHeight = Math.abs(startY - evt.clientY - scrollTop) + "px";
+                    retcWidth = Math.abs(startX - evt.clientX - scrollLeft) + "px";
+                    $(wId + index).style.marginLeft = retcLeft;
+                    $(wId + index).style.marginTop = retcTop;
+                    $(wId + index).style.width = retcWidth;
+                    $(wId + index).style.height = retcHeight;
+                }catch(e){
+                    //alert(e);
                 }
             }
         }
+        var $ = function(id){
+            return document.getElementById(id);
+        }
     </script>
 </head>
+
 <body>
+<svg id="mainSvg" width="1000px" height="1000px">
+<div class="box" id="1box">
+    <div class="bar" id="1bar">protein</div>
+        <div class="content" id="1content">
+            <svg width="10px" height="300px">
+                <rect width="10px" height="300px"></rect>
+            </svg>
+        </div>
+</div>
+<div class="box" id="2box">
+    <div class="bar" id="2bar">calcium</div>
+        <div class="content" id="2content">
+            <svg width="10px" height="300px">
+                <rect width="10px" height="300px"></rect>
+            </svg>
+    </div>
+</div>
+<div class="box" id="3box">
+    <div class="bar" id="3bar">sodium</div>
+    <div class="content" id="3content">
+        <svg width="10px" height="300px">
+            <rect width="10px" height="300px"></rect>
+        </svg>
+    </div>
+</div>
+<div class="box" id="4box">
+    <div class="bar" id="4bar">fiber</div>
+    <div class="content" id="4content">
+        <svg width="10px" height="300px">
+            <rect width="10px" height="300px"></rect>
+        </svg>
+    </div>
+</div>
+<div class="box" id="5box">
+    <div class="bar" id="5bar">vitaminic</div>
+    <div class="content" id="5content">
+        <svg width="10px" height="300px">
+            <rect width="10px" height="300px"></rect>
+        </svg>
+    </div>
+</div>
+<div class="box" id="6box">
+    <div class="bar" id="6bar">potassium</div>
+    <div class="content" id="6content">
+        <svg width="10px" height="300px">
+            <rect width="10px" height="300px"></rect>
+        </svg>
+    </div>
+</div>
+<div class="box" id="7box">
+    <div class="bar" id="7bar">carbohydrate</div>
+    <div class="content" id="7content">
+        <svg width="10px" height="300px">
+            <rect width="10px" height="300px"></rect>
+        </svg>
+    </div>
+</div>
+<div class="box" id="8box">
+    <div class="bar" id="8bar">sugars</div>
+    <div class="content" id="8content">
+        <svg width="10px" height="300px">
+            <rect width="10px" height="300px"></rect>
+        </svg>
+    </div>
+</div>
+<div class="box" id="9box">
+    <div class="bar" id="9bar">fat</div>
+    <div class="content" id="9content">
+        <svg width="10px" height="300px">
+            <rect width="10px" height="300px"></rect>
+        </svg>
+    </div>
+</div>
+<div class="box" id="10box">
+    <div class="bar" id="10bar">water</div>
+    <div class="content" id="10content">
+        <svg width="10px" height="300px">
+            <rect width="10px" height="300px"></rect>
+        </svg>
+    </div>
+</div>
+<div class="box" id="11box">
+    <div class="bar" id="11bar">calories</div>
+    <div class="content" id="11content">
+        <svg width="10px" height="300px">
+            <rect width="10px" height="300px"></rect>
+        </svg>
+    </div>
+</div>
+<div class="box" id="12box">
+    <div class="bar" id="12bar">saturated</div>
+    <div class="content" id="12content">
+        <svg width="10px" height="300px">
+            <rect width="10px" height="300px"></rect>
+        </svg>
+    </div>
+</div>
+<div class="box" id="13box">
+    <div class="bar" id="13bar">monounsat</div>
+    <div class="content" id="13content">
+        <svg width="10px" height="300px">
+            <rect width="10px" height="300px"></rect>
+        </svg>
+    </div>
+</div>
+<div class="box" id="14box">
+    <div class="bar" id="14bar">polyunsat</div>
+    <div class="content" id="14content">
+        <svg width="10px" height="300px">
+            <rect width="10px" height="300px"></rect>
+        </svg>
+    </div>
+</div>
+</svg>
 <script>
-    var coordinate = new coordinate();
-    coordinate.start();
+    var svg = document.getElementById('mainSvg');
+    console.log(svg);
+    var pos1 = document.getElementById("1bar");
+    var pos2 = document.getElementById("2bar");
+    console.log(parseInt(pos1.style.left));
+    var line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.setAttribute("x1", "20");
+    line.setAttribute("y1", "20");
+    line.setAttribute("x2", "80");
+    line.setAttribute("y2", "80");
+    line.setAttribute("stroke-width", "2px");
+    line.setAttribute("stroke", "skyblue");
+    svg.appendChild(line);
+
 </script>
 </body>
 </html>
+

@@ -2,39 +2,51 @@
 <html>
 <head>
     <meta charset=utf-8" />
+    <style type="text/css">
+        .box{position:absolute; /*left:100px; top:100px;*/ padding:1px; background:#f0f3f9; font-size:12px;}
+        .main{background:white; cursor: crosshair}
+        .bar{line-height:24px; padding-left:5px; cursor:move;}
+        .content{width:320px; height:250px;}
+    </style>
     <script type="text/javascript">
         var dragging = false;
         var mouseY;
         var mouseX;
+        var max = 1;
         function dragInit(node){
-            if(node.className == "drag"){
+            if(node.className == "box"){
                 node.onmousedown = down;
                 node.onmousemove = move;
+                node.onmouseover = over;
+                node.onmouseup = up;
                 node.style.position = "relative";
-                node.style.top = "0px";
+                node.style.top = "10px";
                 node.style.left = "0px";
+                node.dragging = false;
             }
             var children = node.childNodes;
-            for(var i = 0; i < children.length; i++){
+            for(var i = 0;i < children.length; i++){
                 dragInit(children[i]);
             }
         }
         window.onload = function(){
             dragInit(document);
-            document.onmouseup = up;
+            document.onmouseup = docUp;
         }
         function down(event)
         {
             event = event || window.event;
             dragging = true;
+            this.dragging = true;
             mouseX = parseInt(event.clientX);
             mouseY = parseInt(event.clientY);
             objY = parseInt(this.style.top);
             objX = parseInt(this.style.left);
+            this.style.zIndex = max++;
         }
         function move(event){
             event = event || window.event;
-            if(dragging == true){
+            if(this.dragging == true && dragging == true){
                 var x,y;
                 y = event.clientY - mouseY + objY;
                 x = event.clientX - mouseX + objX;
@@ -43,17 +55,37 @@
             }
         }
         function up(){
+            this.dragging = false;
+        }
+        function docUp(){
             dragging = false;
+        }
+        function over(){
+            this.style.cursor = "move";
         }
     </script>
 </head>
 
 <body>
-<div class="drag" style="border:1px solid; width:400px; background:#CCCCCC;">
-    <p>hi</p>
+<div class="box" id="box1">
+    <div class="main" id="main1">
+        <div class="bar" id="bar1">drag</div>
+        <div class="content" id="content1">
+            <svg>
+                <rect width="100px" height="100px"></rect>
+            </svg>
+        </div>
+    </div>
 </div>
-<div class="drag" style="border:1px solid; width:400px; background:#CCCCCC;">
-    <p>hello</p>
+<div class="box" id="box2">
+    <div class="main" id="main2">
+        <div class="bar" id="bar2">drag</div>
+        <div class="content" id="content2">
+            <svg>
+                <rect width="100px" height="100px"></rect>
+            </svg>
+        </div>
+    </div>
 </div>
 </body>
 </html>
