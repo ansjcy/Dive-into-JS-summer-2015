@@ -31,7 +31,7 @@
         }catch(e){
             //alert(e);
         }
-    }
+    };
     document.onmouseup = function(){
         try{
             document.body.removeChild($(wId + index));
@@ -46,7 +46,7 @@
             //alert(e);
         }
         flag = false;
-    }
+    };
     document.onmousemove = function(e){
         if(flag){
             try{
@@ -65,7 +65,7 @@
                 //alert(e);
             }
         }
-    }
+    };
     var $ = function(id){
         return document.getElementById(id);
     }

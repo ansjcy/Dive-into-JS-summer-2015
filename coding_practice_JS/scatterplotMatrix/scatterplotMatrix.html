@@ -130,6 +130,7 @@
             circle.setAttribute('r', '3px');
             circle.setAttribute('fill', color);
             circle.setAttribute('fill-opacity', "0.5");
+            circle.setAttribute('class', i);
 
             svg.appendChild(circle);
         }
@@ -199,6 +200,206 @@
         else if(num == 15)
             return ["pw", "pw"];
     }
+</script>
+<script>
+    var wId = "w";
+    var index = 0;
+    var startX = 0, startY = 0;
+    var flag = false;
+    var retcLeft = "0px", retcTop = "0px", retcHeight = "0px", retcWidth = "0px";
+    var svg = document.getElementById("svg-sl");
+    document.onmousedown = function(e){
+        flag = true;
+        try{
+            var evt = window.event || e;
+            var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+            var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+            startX = evt.clientX + scrollLeft;
+            startY = evt.clientY + scrollTop;
+            index++;
+            var div = document.createElement("div");
+            div.id = wId + index;
+            div.className = "div";
+            div.style.marginLeft = startX + "px";
+            div.style.marginTop = startY + "px";
+            document.body.appendChild(div);
+        }catch(e){
+            //alert(e);
+        }
+    };
+    document.onmouseup = function(){
+        try{
+            var marginLeft = parseInt($(wId + index).style.marginLeft);
+            var marginTop = parseInt($(wId + index).style.marginTop);
+            var svgName;
+            console.log($(wId + index).style);
+            console.log(parseInt($(wId + index).style.marginLeft));
+            console.log(parseInt($(wId + index).style.marginLeft)+parseInt($(wId + index).style.width));
+            console.log(parseInt($(wId + index).style.marginTop));
+            console.log(parseInt($(wId + index).style.marginTop)+parseInt($(wId + index).style.height));
+            if(marginLeft <= 440){
+                if(marginLeft<=310){
+                    if(marginLeft<=180){
+                        if(marginTop <= 440){
+                            if(marginTop <= 310){
+                                if(marginTop<=180){
+                                    svgName = "svg-sl";
+                                }
+                                else{
+                                    svgName = "svg-sw-sl";
+                                }
+                            }
+                            else{
+                                svgName = "svg-pl-sl";
+                            }
+                        }
+                        else{
+                            svgName = "svg-pw-sl";
+                        }
+                    }
+                    else{
+                        if(marginTop <= 440){
+                            if(marginTop <= 310){
+                                if(marginTop<=180){
+                                    svgName = "svg-sl-sw";
+                                }
+                                else{
+                                    svgName = "svg-sw";
+                                }
+                            }
+                            else{
+                                svgName = "svg-pl-sw";
+                            }
+                        }
+                        else{
+                            svgName = "svg-pw-sw";
+                        }
+                    }
+                }
+                else{
+                    if(marginTop <= 440){
+                        if(marginTop <= 310){
+                            if(marginTop<=180){
+                                svgName = "svg-sl-pl";
+                            }
+                            else{
+                                svgName = "svg-sw-pl";
+                            }
+                        }
+                        else{
+                            svgName = "svg-pl";
+                        }
+                    }
+                    else{
+                        svgName = "svg-pw-pl";
+                    }
+                }
+            }
+            else{
+                if(marginTop <= 440){
+                    if(marginTop <= 310){
+                        if(marginTop<=180){
+                            svgName = "svg-sl-pw";
+                        }
+                        else{
+                            svgName = "svg-sw-pw";
+                        }
+                    }
+                    else{
+                        svgName = "svg-pl-pw";
+                    }
+                }
+                else{
+                    svgName = "svg-pw";
+                }
+            }
+            console.log(svgName);
+            var selectCircles = [];
+
+            for(var i = 0; i < dataSet.length; i++){
+                var circle = document.getElementsByClassName(i);
+                for(var j = 0; j < circle.length; j++){
+                    if(parseInt(circle[j].getAttribute("cx"))>=parseInt($(wId + index).style.marginLeft)&&
+                            parseInt(circle[j].getAttribute("cx"))<=parseInt($(wId + index).style.marginLeft)+parseInt($(wId + index).style.width)&&
+                            parseInt(circle[j].getAttribute("cy"))>=parseInt($(wId + index).style.marginTop)&&
+                            parseInt(circle[j].getAttribute("cy"))<=parseInt($(wId + index).style.marginTop)+parseInt($(wId + index).style.height)){
+                        for(var k = 0; k < circle.length; k++) {
+                            selectCircles.push(circle[k]);
+                        }
+                    }
+//                    else{
+//                        for(var k = 0; k < circle.length; k++) {
+//                            selectCircles[i].setAttribute("fill", "grey");
+//                        }
+//                    }
+                }
+            }
+            console.log(selectCircles[0].attributes["class"]);
+            for(var i = 0; i < dataSet.length; i++){
+                var circle = document.getElementsByClassName(i);
+                var flagCircle = false;
+                for(var j = 0; j < circle.length; j++){
+                    for(var k in selectCircles){
+                        if(selectCircles[k].attributes["class"] == circle[j].attributes["class"]){
+                            flagCircle = true;
+                            break;
+                        }
+                    }
+                    if(flagCircle)
+                        break;
+                    else{
+                        circle[j].setAttribute("fill", "grey");
+                    }
+                }
+            }
+            document.body.removeChild($(wId + index));
+//            for(var i in selectCircles){
+//                selectCircles[i].setAttribute("fill-opacity", "1");
+//            }
+//            for(var l = 0; l < dataSet.length; l++) {
+//                var flagCircle = false;
+//                var otherLine = document.getElementsByClassName();
+//                for(var n = 0; n < selectCircles.length; n++){
+//                        if(otherLine == selectCircles[n]){
+//                            flagCircle = true;
+//                            break;
+//                        }
+//                    }
+//                    if(flagCircle == true)
+//                        break;
+//                    else{
+//                        otherLine.setAttribute("stroke", 'grey');
+//                    }
+//            }
+
+
+        }catch(e){
+            //alert(e);
+        }
+        flag = false;
+    };
+    document.onmousemove = function(e){
+        if(flag){
+            try{
+                var evt = window.event || e;
+                var scrollTop = document.body.scrollTop || document.documentElement.scrollTop;
+                var scrollLeft = document.body.scrollLeft || document.documentElement.scrollLeft;
+                retcLeft = (startX - evt.clientX - scrollLeft > 0 ? evt.clientX + scrollLeft : startX) + "px";
+                retcTop = (startY - evt.clientY - scrollTop > 0 ? evt.clientY + scrollTop : startY) + "px";
+                retcHeight = Math.abs(startY - evt.clientY - scrollTop) + "px";
+                retcWidth = Math.abs(startX - evt.clientX - scrollLeft) + "px";
+                $(wId + index).style.marginLeft = retcLeft;
+                $(wId + index).style.marginTop = retcTop;
+                $(wId + index).style.width = retcWidth;
+                $(wId + index).style.height = retcHeight;
+            }catch(e){
+                //alert(e);
+            }
+        }
+    };
+    var $ = function(id){
+        return document.getElementById(id);
+    };
 </script>
 </body>
 </html>
