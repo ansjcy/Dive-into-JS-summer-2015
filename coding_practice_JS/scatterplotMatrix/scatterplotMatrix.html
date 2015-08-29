@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset=utf-8" />
+    <style>
+        .box{position:absolute; padding:1px; width: 100px; height: 100px;}
+        .div{position:absolute; border:1px dashed lightskyblue; width:0px; height:0px;left:0px; top:0px; overflow:hidden;}
+        body,h1,h2,h3,h4,h5,h6,hr,p,blockquote,dl,dt,dd,ul,ol,li,pre,form,fieldset,legend,button,input,textarea,th,td{margin:0;padding:0}
+        html{color:#000;overflow-y:scoll;overflow:-moz-scrollbars-vertical;}
+    </style>
+    <script src = flower.js></script>
+</head>
+<body>
+<svg id="mainSvg" width="1500px" height="1000px">
+    <div class="box" id="box-sl" style="top: 50px; margin-left: 50px">
+        <svg width="120px" height="120px" id="svg-sl">
+            <rect width="120px" height="120px" fill="none" stroke="black" stroke-width="1px"></rect>
+        </svg>
+    </div>
+    <div class="box" id="box-sl-sw" style="top: 50px; margin-left: 180px">
+        <svg width="120px" height="120px" id="svg-sl-sw">
+            <rect width="120px" height="120px" fill="none" stroke="black" stroke-width="1px"></rect>
+        </svg>
+    </div>
+    <div class="box" id="box-sl-pl" style="top: 50px; margin-left: 310px">
+        <svg width="120px" height="120px" id="svg-sl-pl">
+            <rect width="120px" height="120px" fill="none" stroke="black" stroke-width="1px"></rect>
+        </svg>
+    </div>
+    <div class="box" id="box-sl-pw" style="top: 50px; margin-left: 440px">
+        <svg width="120px" height="120px" id="svg-sl-pw">
+            <rect width="120px" height="120px" fill="none" stroke="black" stroke-width="1px"></rect>
+        </svg>
+    </div>
+    <div class="box" id="box-sw-sl" style="top: 180px; margin-left: 50px">
+        <svg width="120px" height="120px" id="svg-sw-sl">
+            <rect width="120px" height="120px" fill="none" stroke="black" stroke-width="1px"></rect>
+        </svg>
+    </div>
+    <div class="box" id="box-sw" style="top: 180px; margin-left: 180px">
+        <svg width="120px" height="120px" id="svg-sw">
+            <rect width="120px" height="120px" fill="none" stroke="black" stroke-width="1px"></rect>
+        </svg>
+    </div>
+    <div class="box" id="box-sw-pl" style="top: 180px; margin-left: 310px">
+        <svg width="120px" height="120px" id="svg-sw-pl">
+            <rect width="120px" height="120px" fill="none" stroke="black" stroke-width="1px"></rect>
+        </svg>
+    </div>
+    <div class="box" id="box-sw-pw" style="top: 180px; margin-left: 440px">
+        <svg width="120px" height="120px" id="svg-sw-pw">
+            <rect width="120px" height="120px" fill="none" stroke="black" stroke-width="1px"></rect>
+        </svg>
+    </div>
+    <div class="box" id="box-pl-sl" style="top: 310px; margin-left: 50px">
+        <svg width="120px" height="120px" id="svg-pl-sl">
+            <rect width="120px" height="120px" fill="none" stroke="black" stroke-width="1px"></rect>
+        </svg>
+    </div>
+    <div class="box" id="box-pl-sw" style="top: 310px; margin-left: 180px">
+        <svg width="120px" height="120px" id="svg-pl-sw">
+            <rect width="120px" height="120px" fill="none" stroke="black" stroke-width="1px"></rect>
+        </svg>
+    </div>
+    <div class="box" id="box-pl" style="top: 310px; margin-left: 310px">
+        <svg width="120px" height="120px" id="svg-pl">
+            <rect width="120px" height="120px" fill="none" stroke="black" stroke-width="1px"></rect>
+        </svg>
+    </div>
+    <div class="box" id="box-pl-pw" style="top: 310px; margin-left: 440px">
+        <svg width="120px" height="120px" id="svg-pl-pw">
+            <rect width="120px" height="120px" fill="none" stroke="black" stroke-width="1px"></rect>
+        </svg>
+    </div>
+    <div class="box" id="box-pw-sl" style="top: 440px; margin-left: 50px">
+        <svg width="120px" height="120px" id="svg-pw-sl">
+            <rect width="120px" height="120px" fill="none" stroke="black" stroke-width="1px"></rect>
+        </svg>
+    </div>
+    <div class="box" id="box-pw-sw" style="top: 440px; margin-left: 180px">
+        <svg width="120px" height="120px" id="svg-pw-sw">
+            <rect width="120px" height="120px" fill="none" stroke="black" stroke-width="1px"></rect>
+        </svg>
+    </div>
+    <div class="box" id="box-pw-pl" style="top: 440px; margin-left: 310px">
+        <svg width="120px" height="120px" id="svg-pw-pl">
+            <rect width="120px" height="120px" fill="none" stroke="black" stroke-width="1px"></rect>
+        </svg>
+    </div>
+    <div class="box" id="box-pw" style="top: 440px; margin-left: 440px">
+        <svg width="120px" height="120px" id="svg-pw">
+            <rect width="120px" height="120px" fill="none" stroke="black" stroke-width="1px"></rect>
+        </svg>
+    </div>
+</svg>
+<script>
+    for(var count = 0; count < 16; count++) {
+        var nameX = getCoordinateName(count)[1];
+        var nameY = getCoordinateName(count)[0];
+        if(nameX == nameY)
+            var box = document.getElementById("box-"+nameY);    //
+        else
+            var box = document.getElementById("box-"+nameY+"-"+nameX);
+        var svg = document.getElementById("mainSvg");
+        var baseX = parseInt(box.style.marginLeft);
+        var baseY = parseInt(box.style.top) + 120;
+        var resultX = getMinMax(nameX);          //
+        var resultY = getMinMax(nameY);          //
+        var maxValueX = resultX[1];
+        var minValueX = resultX[0];
+        var maxValueY = resultY[1];
+        var minValueY = resultY[0];
+        for (var i in dataSet) {
+            var color;
+            if (dataSet[i][0] == "setosa")
+                color = "darkred";
+            else if (dataSet[i][0] == "versicolor")
+                color = "green";
+            else if (dataSet[i][0] == "virginica")
+                color = "darkblue";
+
+            var indexX = (nameX == "sl")?1:(nameX == "sw")?2:(nameX == "pl")?3:4;
+            var indexY = (nameY == "sl")?1:(nameY == "sw")?2:(nameY == "pl")?3:4;
+            var x = (dataSet[i][indexX] - minValueX) / (maxValueX - minValueX) * 120 + baseX;      //
+            var y = baseY - (dataSet[i][indexY] - minValueY) / (maxValueY - minValueY) * 120;      //
+
+            var circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+            circle.setAttribute('cx', x.toString() + "px");
+            circle.setAttribute('cy', y.toString() + "px");
+            circle.setAttribute('r', '3px');
+            circle.setAttribute('fill', color);
+            circle.setAttribute('fill-opacity', "0.5");
+
+            svg.appendChild(circle);
+        }
+    }
+    function getMinMax(attrName){
+        var max = 0;
+        var min = 999;
+        for(var i in dataSet){
+            if(attrName == "sl"){
+                if(dataSet[i][1] > max)
+                    max = dataSet[i][1];
+                if(dataSet[i][1] < min)
+                    min = dataSet[i][1];
+            }
+            else if(attrName == "sw"){
+                if(dataSet[i][2] > max)
+                    max = dataSet[i][2];
+                if(dataSet[i][2] < min)
+                    min = dataSet[i][2];
+            }
+            else if(attrName == "pl"){
+                if(dataSet[i][3] > max)
+                    max = dataSet[i][3];
+                if(dataSet[i][3] < min)
+                    min = dataSet[i][3];
+            }
+            else if(attrName == "pw"){
+                if(dataSet[i][4] > max)
+                    max = dataSet[i][4];
+                if(dataSet[i][4] < min)
+                    min = dataSet[i][4];
+            }
+        }
+        return [min, max];
+    }
+    function getCoordinateName(num){
+        if(num == 0)
+            return ["sl", "sl"];
+        else if(num == 1)
+            return ["sl", "sw"];
+        else if(num == 2)
+            return ["sl", "pl"];
+        else if(num == 3)
+            return ["sl", "pw"];
+        else if(num == 4)
+            return ["sw", "sl"];
+        else if(num == 5)
+            return ["sw", "sw"];
+        else if(num == 6)
+            return ["sw", "pl"];
+        else if(num == 7)
+            return ["sw", "pw"];
+        else if(num == 8)
+            return ["pl", "sl"];
+        else if(num == 9)
+            return ["pl", "sw"];
+        else if(num == 10)
+            return ["pl", "pl"];
+        else if(num == 11)
+            return ["pl", "pw"];
+        else if(num == 12)
+            return ["pw", "sl"];
+        else if(num == 13)
+            return ["pw", "sw"];
+        else if(num == 14)
+            return ["pw", "pl"];
+        else if(num == 15)
+            return ["pw", "pw"];
+    }
+</script>
+</body>
+</html>
