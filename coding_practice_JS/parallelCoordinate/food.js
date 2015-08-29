@@ -1,20 +1,20 @@
 var foods = [{
     "name": "Butter oil, anhydrous",
     "group": "Dairy and Egg Products",
-    "protein (g)": 0.28,
-    "calcium (g)": 0.004,
-    "sodium (g)": 0.002,
-    "fiber (g)": null,
-    "vitaminc (g)": 0,
-    "potassium (g)": 0.005,
-    "carbohydrate (g)": null,
-    "sugars (g)": null,
-    "fat (g)": 99.48,
-    "water (g)": 0.24,
-    "calories": 876,
-    "saturated (g)": 61.924,
-    "monounsat (g)": 28.732,
-    "polyunsat (g)": 3.694
+    "protein (g)": 0.28,    //0-62
+    "calcium (g)": 0.004,   //0-1.3
+    "sodium (g)": 0.002,    //0-5
+    "fiber (g)": null,      //0-28
+    "vitaminc (g)": 0,      //0-0.28
+    "potassium (g)": 0.005, //2
+    "carbohydrate (g)": null,//100
+    "sugars (g)": null,     //100
+    "fat (g)": 99.48,       //100
+    "water (g)": 0.24,      //100
+    "calories": 876,        //902
+    "saturated (g)": 61.924,   //96
+    "monounsat (g)": 28.732,    //80
+    "polyunsat (g)": 3.694      //70
 }, {
     "name": "Butter, salted",
     "group": "Dairy and Egg Products",
