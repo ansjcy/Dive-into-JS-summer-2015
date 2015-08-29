@@ -287,6 +287,7 @@
                 line.setAttribute("stroke", "hsl(" + (360 * (foods[i].groupNumber + 1) / groupNum) + ", 100%, 60%)");
                 //line.setAttribute("stroke", 'blue');
                 line.setAttribute("id", i+"line"+"_"+j+"box_"+(j+1)+"box");
+                line.setAttribute("class", i+"line");
                 svg.appendChild(line);
             }
         }
@@ -332,7 +333,51 @@
     };
     document.onmouseup = function(){
         try{
-            console.log($(wId + index).style.marginLeft);
+            console.log($(wId + index).style);
+            console.log(parseInt($(wId + index).style.marginLeft));
+            console.log(parseInt($(wId + index).style.marginLeft)+parseInt($(wId + index).style.width));
+            console.log(parseInt($(wId + index).style.marginTop));
+            console.log(parseInt($(wId + index).style.marginTop)+parseInt($(wId + index).style.height));
+            var selectLines = [];
+            for(var i = 0; i < foods.length; i++){
+                var line = document.getElementsByClassName(i+"line");
+                for(var j = 0; j < line.length; j++){
+                    if(parseInt(line[j].getAttribute("x1"))>=parseInt($(wId + index).style.marginLeft)&&
+                            parseInt(line[j].getAttribute("x1"))<=parseInt($(wId + index).style.marginLeft)+parseInt($(wId + index).style.width)&&
+                            parseInt(line[j].getAttribute("y1"))>=parseInt($(wId + index).style.marginTop)&&
+                            parseInt(line[j].getAttribute("y1"))<=parseInt($(wId + index).style.marginTop)+parseInt($(wId + index).style.height)||
+                            parseInt(line[j].getAttribute("x2"))>=parseInt($(wId + index).style.marginLeft)&&
+                            parseInt(line[j].getAttribute("x2"))<=parseInt($(wId + index).style.marginLeft)+parseInt($(wId + index).style.width)&&
+                            parseInt(line[j].getAttribute("y2"))>=parseInt($(wId + index).style.marginTop)&&
+                            parseInt(line[j].getAttribute("y2"))<=parseInt($(wId + index).style.marginTop)+parseInt($(wId + index).style.height)){
+                        for(var k = 0; k < line.length; k++) {
+                            line[k].setAttribute("stroke-opacity", "1");
+                            selectLines.push(line[k]);
+                        }
+                    }
+
+                }
+            }
+            console.log(selectLines);
+            for(var l = 0; l < foods.length; l++) {
+                var flagLine = false;
+                for(var m = 0; m < 13/*14*/; m++) {
+                    var otherLine = document.getElementById(l+"line"+"_"+m+"box_"+(m+1)+"box");
+                    for(var n = 0; n < selectLines.length; n++){
+                        if(otherLine == selectLines[n]){
+                            flagLine = true;
+                            break;
+                        }
+                    }
+                    if(flagLine == true)
+                        break;
+                    else{
+                        otherLine.setAttribute("stroke-opacity", "0.1");
+                        otherLine.setAttribute("stroke", 'grey');
+                    }
+                }
+            }
+
             //document.body.removeChild($(wId + index));
 //                var div = document.createElement("div");
 //                div.className = "retc";
