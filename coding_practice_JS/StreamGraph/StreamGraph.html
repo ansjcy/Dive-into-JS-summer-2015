@@ -5,7 +5,7 @@
     <title></title>
     <script>
         //this function use the method on http://bl.ocks.org/mbostock/4060954 from Lee Byron's test data generator
-        function bumpLayer(n){
+        function myLayer(n){
             function bump(a){
                 var x = 1 / (0.1 + Math.random());
                 var y = 2 * Math.random() - 0.5;
@@ -149,7 +149,7 @@
 
     for(var i = 0; i < number; i++)
     {
-        layers.push(bumpLayer(400));       //the number of the sample points!
+        layers.push(mypLayer(400));       //the number of the sample points!
     }
     var sg = new Stream(context);
     sg.start();
