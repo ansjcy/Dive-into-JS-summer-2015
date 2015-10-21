@@ -20,7 +20,6 @@
     //Width and height
     var w = 300;
     var h = 300;
-
     var dataset = [ 5, 10, 20, 45, 6, 25 ];
 
     var outerRadius = w / 2;
@@ -54,7 +53,7 @@
                 return color(i);
             })
             .attr("d", arc);
-
+    d3.chart
     //Labels
     arcs.append("text")
             .attr("transform", function(d) {
